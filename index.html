@@ -19,7 +19,7 @@
             <div class="col-xs-12 col-md-12">
                 <div class="top-bar-wrapper">
                     <a href="#" class="logo-link"><div class="brand-title-neon"><div class="brand-stack"><div class="brand-line-main"><span class="brand-sa">SA</span><span class="brand-live">TV</span></div><div class="brand-line-sub">Watch Live Sports • Movies • Entertainment</div></div></div></a>
-                    <div class="channel-search-box-premium"><input type="text" id="channelSearch" placeholder="Search matches..." autocomplete="off"><svg class="search-icon-inside" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 22L20 20" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                    <div class="channel-search-box-premium"><input type="text" id="channelSearch" placeholder="Search channels..." autocomplete="off"><svg class="search-icon-inside" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 22L20 20" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
                 </div>
             </div>
         </div>
@@ -39,100 +39,173 @@
     <script>
     !function(){"use strict";if(window.location.protocol==="view-source:"){window.location.href="#" }console.clear();console.log=function(){};console.warn=function(){};console.error=function(){};console.info=function(){};function debuggerCheck(){var start=performance.now();debugger;var end=performance.now();if(end-start>100){window.location.href="about:blank"}}setInterval(debuggerCheck,1e3);document.addEventListener('keydown',function(e){var key=e.keyCode||e.which;if(key===123||(e.ctrlKey&&e.shiftKey&&(key===73||key===74))||(e.ctrlKey&&key===85)||(e.ctrlKey&&key===83)||(e.ctrlKey&&key===80)||(e.ctrlKey&&key===67)||(e.ctrlKey&&key===86)||(e.ctrlKey&&key===88)||key===44){e.preventDefault();e.stopPropagation();return false}});document.addEventListener('contextmenu',function(e){e.preventDefault();return false});document.addEventListener('copy',function(e){e.preventDefault();return false});document.addEventListener('cut',function(e){e.preventDefault();return false});document.addEventListener('paste',function(e){e.preventDefault();return false});document.addEventListener('dragstart',function(e){e.preventDefault();return false});document.addEventListener('selectstart',function(e){e.preventDefault();return false});document.addEventListener('touchstart',function(e){if(e.touches.length>1){e.preventDefault();return false}},{passive:false});document.addEventListener('touchmove',function(e){if(e.touches.length>1){e.preventDefault();return false}},{passive:false});document.querySelectorAll('img, iframe, video').forEach(function(el){el.setAttribute('draggable','false');el.addEventListener('dragstart',function(e){e.preventDefault();return false});el.addEventListener('contextmenu',function(e){e.preventDefault();return false})})}();
     
-    // মূল গিটহাব জেসন লিংক
-    const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/sm-monirulislam/Upcoming-and-Live-Sports-Data/refs/heads/main/Sports_data.json';
+    // আপনার দেওয়া নতুন M3U প্লেলিস্ট লিংক
+    const M3U_URL = 'https://raw.githubusercontent.com/ahmedstore75/Iptvbdlive/refs/heads/main/mixiptvchannel.m3u';
+    // CORS ব্লকিং এড়ানোর জন্য শক্তিশালী প্রক্সি লিংক
+    const PROXY_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(M3U_URL) + '&t=' + Date.now();
     
-    const container=document.getElementById('channel-container');
-    const searchInput=document.getElementById('channelSearch');
+    const container = document.getElementById('channel-container');
+    const searchInput = document.getElementById('channelSearch');
     
+    // M3U টেক্সট ফাইল ডাটা রিড ও প্রসেস করার ফাংশন
+    function parseM3U(data) {
+        const channels = [];
+        const lines = data.split('\n');
+        let currentChannel = {};
+
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+            if (line.startsWith('#EXTINF:')) {
+                currentChannel = {};
+                
+                // লোগো খোঁজা (tvg-logo="...")
+                const logoMatch = line.match(/tvg-logo="([^"]+)"/);
+                if (logoMatch) currentChannel.image = logoMatch[1];
+                
+                // চ্যানেলের নাম খোঁজা (কমা ',' এর পরের অংশ)
+                const nameIndex = line.lastIndexOf(',');
+                if (nameIndex !== -1) {
+                    currentChannel.name = line.substring(nameIndex + 1).trim();
+                } else {
+                    currentChannel.name = "Unknown Channel";
+                }
+            } else if (line.startsWith('http://') || line.startsWith('https://')) {
+                currentChannel.url = line;
+                if (currentChannel.name) {
+                    channels.push(currentChannel);
+                }
+                currentChannel = {};
+            }
+        }
+        return channels;
+    }
+
     function renderChannels(channels){
-        container.innerHTML='';
-        if(!channels||channels.length===0){container.innerHTML='<p style="color:#aaa;text-align:center;padding:20px;">⚠️ কোনো ম্যাচ পাওয়া যায়নি।</p>';return}
-        channels.forEach((channel,index)=>{
-            const name=channel.Title||`ম্যাচ ${index+1}`;
-            const url=channel.StreamLink||channel.EmbedLink||'#';
-            const image=channel.Thumbnail||'https://i.postimg.cc/mD1VCt2C/RS-Live.png';
-            const li=document.createElement('li');
-            li.setAttribute('tabindex','0');
-            li.innerHTML=`<img src="${image}" alt="${name}" loading="lazy" onerror="this.src='https://i.postimg.cc/mD1VCt2C/RS-Live.png';"><div class="channel-info-box"><p class="channel-title">${name}</p></div>`;
-            li.addEventListener('click',function(){
+        container.innerHTML = '';
+        if(!channels || channels.length === 0){
+            container.innerHTML = '<p style="color:#aaa;text-align:center;padding:20px;">⚠️ কোনো চ্যানেল পাওয়া যায়নি।</p>';
+            return;
+        }
+        channels.forEach((channel) => {
+            const name = channel.name;
+            const url = channel.url;
+            const image = channel.image || 'https://i.postimg.cc/mD1VCt2C/RS-Live.png'; // ডিফল্ট লোগো
+            
+            const li = document.createElement('li');
+            li.setAttribute('tabindex', '0');
+            li.innerHTML = `<img src="${image}" alt="${name}" loading="lazy" onerror="this.src='https://i.postimg.cc/mD1VCt2C/RS-Live.png';"><div class="channel-info-box"><p class="channel-title">${name}</p></div>`;
+            
+            li.addEventListener('click', function(){
                 if(document.getElementById('tv-player-iframe')){
-                    document.getElementById('tv-player-iframe').src=url;
+                    document.getElementById('tv-player-iframe').src = url;
                 }
                 if(searchInput){
-                    searchInput.value='';
-                    const items=container.querySelectorAll('li');
-                    items.forEach(item=>item.style.display='');
-                    searchInput.blur()
+                    searchInput.value = '';
+                    const items = container.querySelectorAll('li');
+                    items.forEach(item => item.style.display = '');
+                    searchInput.blur();
                 }
             });
-            container.appendChild(li)
+            container.appendChild(li);
         });
-        setupSearchFilter()
+        setupSearchFilter();
     }
+
     function setupSearchFilter(){
-        const searchField=document.getElementById('channelSearch');
-        if(!searchField)return;
-        if(searchField._listenerAdded)return;
-        searchField._listenerAdded=true;
-        searchField.addEventListener('input',function(){
-            const filter=this.value.toLowerCase().trim();
-            const items=container.querySelectorAll('li');
-            items.forEach(item=>{
-                const title=item.querySelector('.channel-title');
+        const searchField = document.getElementById('channelSearch');
+        if(!searchField) return;
+        if(searchField._listenerAdded) return;
+        searchField._listenerAdded = true;
+        searchField.addEventListener('input', function(){
+            const filter = this.value.toLowerCase().trim();
+            const items = container.querySelectorAll('li');
+            items.forEach(item => {
+                const title = item.querySelector('.channel-title');
                 if(title){
-                    const text=title.textContent.toLowerCase();
-                    item.style.display=text.includes(filter)?'':'none'
+                    const text = title.textContent.toLowerCase();
+                    item.style.display = text.includes(filter) ? '' : 'none';
                 }
-            })
-        })
+            });
+        });
     }
     
-    // ব্যাকআপ মেকানিজমসহ ডেটা লোড করার আধুনিক ফাংশন
     function loadChannels(){
-        // প্রথম চেষ্টা: AllOrigins CORS Proxy
-        const url1 = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(GITHUB_RAW_URL) + '&t=' + Date.now();
-        
-        fetch(url1)
-            .then(res => { if(!res.ok) throw new Error(); return res.json(); })
-            .then(data => { processData(data); })
+        fetch(PROXY_URL)
+            .then(res => { if(!res.ok) throw new Error(); return res.text(); })
+            .then(data => { 
+                const parsedChannels = parseM3U(data);
+                renderChannels(parsedChannels); 
+            })
             .catch(() => {
-                // ব্যর্থ হলে দ্বিতীয় চেষ্টা: Cors-anywhere বা সরাসরি রিকোয়েস্ট বিকল্প
-                const url2 = 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(GITHUB_RAW_URL);
-                fetch(url2)
-                    .then(res => res.json())
-                    .then(data => { processData(data); })
+                // ১ম প্রক্সি ফেইল করলে ২য় প্রক্সি ট্রাই করবে
+                const fallbackProxy = 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(M3U_URL);
+                fetch(fallbackProxy)
+                    .then(res => res.text())
+                    .then(data => {
+                        const parsedChannels = parseM3U(data);
+                        renderChannels(parsedChannels);
+                    })
                     .catch(() => {
-                        // যদি প্রক্সি ফেইল করে, সরাসরি গিটহাব ট্রাই করবে
-                        fetch(GITHUB_RAW_URL + '?t=' + Date.now())
-                            .then(res => res.json())
-                            .then(data => { processData(data); })
+                        // প্রক্সি ছাড়া সরাসরি ট্রাই
+                        fetch(M3U_URL + '?t=' + Date.now())
+                            .then(res => res.text())
+                            .then(data => {
+                                const parsedChannels = parseM3U(data);
+                                renderChannels(parsedChannels);
+                            })
                             .catch(() => {
-                                container.innerHTML=`<p style="color:#ff6b6b;text-align:center;padding:20px;">⚠️ প্লেলিস্ট লোড করা যাচ্ছে না।<br><span style="font-size:12px;color:#888;">অনুগ্রহ করে ফাইলটি গিটহাব পেজেস বা লাইভ হোস্টিংয়ে আপলোড করে চেক করুন।</span></p>`;
+                                container.innerHTML = `<p style="color:#ff6b6b;text-align:center;padding:20px;">⚠️ চ্যানেল লোড করা যাচ্ছে না।<br><span style="font-size:12px;color:#888;">ফাইলটি গিটহাব পেজেস বা লাইভ হোস্টিংয়ে আপলোড করে চেক করুন।</span></p>`;
                             });
                     });
             });
     }
 
-    function processData(data) {
-        let finalData = [];
-        if (Array.isArray(data)) {
-            finalData = data;
-        } else if (data && typeof data === 'object' && data.contents) {
-            // কিছু প্রক্সি ডেটা অবজেক্টের ভেতরে পাঠায়
-            try {
-                const parsed = JSON.parse(data.contents);
-                if (Array.isArray(parsed)) finalData = parsed;
-            } catch(e) {}
-        }
-        renderChannels(finalData);
-    }
-
-    window.addEventListener('DOMContentLoaded',function(){setTimeout(()=>{const loader=document.getElementById('intro-loader');if(loader){loader.style.opacity='0';loader.style.visibility='hidden';setTimeout(()=>loader.remove(),500)}},1200)});
+    window.addEventListener('DOMContentLoaded', function(){
+        setTimeout(() => {
+            const loader = document.getElementById('intro-loader');
+            if(loader){
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+                setTimeout(() => loader.remove(), 500);
+            }
+        }, 1200);
+    });
+    
     loadChannels();
     
-    document.addEventListener('keydown',function(event){const items=Array.from(document.querySelectorAll('#channel-container li')).filter(el=>el.style.display!=='none');const active=document.activeElement;const searchInput=document.getElementById('channelSearch');if(active===searchInput){if(event.keyCode===13||event.key==="Enter"){event.preventDefault();event.stopPropagation();if(items.length>0){items[0].click()}searchInput.blur();return false}if(event.keyCode===40||event.key==="ArrowDown"){event.preventDefault();if(items.length>0)items[0].focus()}return}if(items.length===0)return;let index=items.indexOf(active);if(event.keyCode===40||event.key==="ArrowDown"){event.preventDefault();let nextIndex=index+1;if(nextIndex<items.length)items[nextIndex].focus()}else if(event.keyCode===38||event.key==="ArrowUp"){event.preventDefault();let prevIndex=index-1;if(prevIndex>=0){items[prevIndex].focus()}else if(prevIndex===-1&&searchInput){searchInput.focus()}}else if(event.keyCode===13||event.key==="Enter"){if(active&&active.tagName==='LI'){event.preventDefault();active.click()}}});
-    function initTVFocus(){setTimeout(()=>{const firstChannel=document.querySelector('#channel-container li');const searchInput=document.getElementById('channelSearch');if(firstChannel&&document.activeElement!==searchInput){firstChannel.focus()}},600)}
+    document.addEventListener('keydown', function(event){
+        const items = Array.from(document.querySelectorAll('#channel-container li')).filter(el => el.style.display !== 'none');
+        const active = document.activeElement;
+        const searchInput = document.getElementById('channelSearch');
+        if(active === searchInput){
+            if(event.keyCode === 13 || event.key === "Enter"){
+                event.preventDefault(); event.stopPropagation();
+                if(items.length > 0){ items[0].click(); }
+                searchInput.blur(); return false;
+            }
+            if(event.keyCode === 40 || event.key === "ArrowDown"){
+                event.preventDefault(); if(items.length > 0) items[0].focus();
+            }
+            return;
+        }
+        if(items.length === 0) return;
+        let index = items.indexOf(active);
+        if(event.keyCode === 40 || event.key === "ArrowDown"){
+            event.preventDefault(); let nextIndex = index + 1; if(nextIndex < items.length) items[nextIndex].focus();
+        }else if(event.keyCode === 38 || event.key === "ArrowUp"){
+            event.preventDefault(); let prevIndex = index - 1; if(prevIndex >= 0){ items[prevIndex].focus(); }else if(prevIndex === -1 && searchInput){ searchInput.focus(); }
+        }else if(event.keyCode === 13 || event.key === "Enter"){
+            if(active && active.tagName === 'LI'){ event.preventDefault(); active.click(); }
+        }
+    });
+
+    function initTVFocus(){
+        setTimeout(() => {
+            const firstChannel = document.querySelector('#channel-container li');
+            const searchInput = document.getElementById('channelSearch');
+            if(firstChannel && document.activeElement !== searchInput){ firstChannel.focus(); }
+        }, 600);
+    }
     initTVFocus();
     </script>
     <script async="async" data-cfasync="false" src="https://pl26377079.effectivecpmnetwork.com/cdeccdd75d3e2e6916a42ce9653cfb08/invoke.js"></script>
