@@ -34,13 +34,33 @@
             position: absolute !important; top: 0; left: 0; width: 100% !important; height: 100% !important;
         }
 
+        /* 🔊 কাস্টম আনমিউট বাটন ওভারলে */
+        #unmute-overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.4);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 999; cursor: pointer; transition: opacity 0.3s ease;
+        }
+        .unmute-btn {
+            background: linear-gradient(135deg, var(--secondary-glow), #ff5500);
+            color: #fff; padding: 12px 24px; border-radius: 30px;
+            font-weight: bold; font-size: 14px; letter-spacing: 0.5px;
+            box-shadow: 0 5px 20px rgba(255, 0, 85, 0.5);
+            display: flex; align-items: center; gap: 8px;
+            animation: pulseBtn 1.5s infinite;
+        }
+        @keyframes pulseBtn {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 5px 25px rgba(255, 0, 85, 0.8); }
+            100% { transform: scale(1); }
+        }
+
         /* হেডার ও সার্চ */
         .top-bar-wrapper { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; border-radius: 16px; background: rgba(10, 10, 18, 0.9); border: 1px solid rgba(0, 240, 255, 0.25); margin-bottom: 15px; gap: 10px; }
         .brand-sa { font-size: 30px; font-weight: 900; background: linear-gradient(45deg, #ff0055, #ff5500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .brand-live { font-size: 30px; font-weight: 900; background: linear-gradient(45deg, #00f0ff, #0072ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .channel-search-box-premium input { width: 180px; height: 42px; border-radius: 12px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding-left: 15px; outline: none; }
         
-        /* 📁 ক্যাটাগরি সেকশন */
+        /* ক্যাটাগরি সেকশন */
         .category-container {
             display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 12px; margin-bottom: 10px;
             scrollbar-width: none; -ms-overflow-style: none;
@@ -66,7 +86,7 @@
         .thumbnail-slider li img { width: 42px; height: 42px; border-radius: 8px; object-fit: cover; background: #000; }
         .channel-title { font-size: 13px; font-weight: 600; margin: 0; }
 
-        /* 🚨 ল্যান্ডস্কেপ মোড - ফুল স্ক্রিন ইঞ্জিন */
+        /* ল্যান্ডস্কেপ মোড - ফুল স্ক্রিন ইঞ্জিন */
         body.fullscreen-mode { padding: 0 !important; margin: 0 !important; overflow: hidden !important; }
         body.fullscreen-mode .top-bar-wrapper, body.fullscreen-mode .category-container, body.fullscreen-mode .channel-list { display: none !important; }
         body.fullscreen-mode .tv-area, body.fullscreen-mode .row, body.fullscreen-mode .col-md-9 { margin: 0 !important; padding: 0 !important; width: 100vw !important; height: 100vh !important; position: fixed !important; top: 0; left: 0; z-index: 99999; }
@@ -91,6 +111,13 @@
             <div class="col-xs-12 col-md-9">
                 <div class="video-container-box">
                     <div id="player"></div>
+                    <!-- সাউন্ড অন করার ওভারলে বাটন -->
+                    <div id="unmute-overlay" onclick="handleUnmute()">
+                        <div class="unmute-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM12 4L9.91 6.09 12 8.18V4zm-7.7 1.49L3 6.79 7.21 11H3v2h4l5 5v-6.18l4.18 4.18c-.5.33-1.05.59-1.68.72v2.03c1.17-.23 2.25-.79 3.14-1.57l2.55 2.55 1.29-1.29L4.3 5.49z"/></svg>
+                            টাচ করে সাউন্ড অন করুন
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -111,11 +138,8 @@
     let allChannels = [];
     const RAW_M3U_URL = 'https://raw.githubusercontent.com/ahmedstore75/Iptvbdlive/main/mixiptvchannel.m3u';
 
-    // 🚀 হাইব্রিড অটো-প্লে ইঞ্জিন
-    function initPlayer(videoUrl) {
-        if (mainPlayer) {
-            mainPlayer.destroy();
-        }
+    function initPlayer(videoUrl, startMuted = true) {
+        if (mainPlayer) { mainPlayer.destroy(); }
         
         mainPlayer = new Clappr.Player({
             source: videoUrl,
@@ -123,34 +147,33 @@
             width: '100%',
             height: '100%',
             autoPlay: true,  
-            mute: true, // ব্রাউজার পলিসি বাইপাস করার জন্য প্রথমে মিউট করে স্টার্ট হবে
+            mute: startMuted, // ব্রাউজার পলিসি অনুযায়ী প্রথমবার ট্রু থাকবে
             allowfullscreen: true,
-            playback: {
-                playInline: true,
-                recycleVideo: true
-            }
+            playback: { playInline: true, recycleVideo: true }
         });
 
-        // জোরপূর্বক স্ক্রিন ফিট এবং অটো-আনমিউট ট্রিপল লেয়ার মেকানিজম
+        // কাস্টম বাটন এবং প্লে ফিক্স কন্ট্রোল
+        const overlay = document.getElementById('unmute-overlay');
+        if(!startMuted && overlay) { overlay.style.display = 'none'; }
+        else if (overlay) { overlay.style.display = 'flex'; }
+
         setTimeout(() => {
             const videoElement = document.querySelector('#player video');
             if (videoElement) {
                 videoElement.style.setProperty('object-fit', 'fill', 'important');
-                
-                // ব্যাকগ্রাউন্ডে প্লে চালু করার কমান্ড
                 videoElement.play().catch(() => {});
-                
-                // স্ক্রিনে ক্লিক বা টাচ করলেই স্বয়ংক্রিয়ভাবে সাউন্ড ফুল হয়ে যাবে
-                const unMuteAction = () => {
-                    videoElement.muted = false;
-                    mainPlayer.setVolume(100);
-                    window.removeEventListener('click', unMuteAction);
-                    window.removeEventListener('touchstart', unMuteAction);
-                };
-                window.addEventListener('click', unMuteAction);
-                window.addEventListener('touchstart', unMuteAction);
             }
         }, 600);
+    }
+
+    // ওভারলে বাটনে ক্লিক করলে সাউন্ড ফুল হবে এবং বাটন ভ্যানিশ হবে
+    function handleUnmute() {
+        const videoElement = document.querySelector('#player video');
+        if (videoElement) {
+            videoElement.muted = false;
+            mainPlayer.setVolume(100);
+        }
+        document.getElementById('unmute-overlay').style.display = 'none';
     }
 
     // স্ক্রিন রোটেশন ডিটেক্টর
@@ -176,30 +199,20 @@
                 let line = lines[i].trim();
                 if (line.toUpperCase().startsWith('#EXTINF:')) {
                     current = { name: "Live Channel", image: "", url: "", category: "OTHERS" };
-                    
-                    // লোগো ডিটেকশন
                     let logo = line.match(/tvg-logo="([^"]+)"/i);
                     if (logo) current.image = logo[1];
-                    
-                    // গ্রুপ/ক্যাটাগরি ডিটেকশন
                     let group = line.match(/group-title="([^"]+)"/i);
                     if (group) {
                         current.category = group[1].toUpperCase();
                         categories.add(group[1].toUpperCase());
                     }
-                    
                     let idx = line.lastIndexOf(',');
                     if (idx !== -1) current.name = line.substring(idx + 1).trim();
                 } else if (line.startsWith('http')) {
-                    if (current) { 
-                        current.url = line; 
-                        allChannels.push(current); 
-                        current = null; 
-                    }
+                    if (current) { current.url = line; allChannels.push(current); current = null; }
                 }
             }
 
-            // ক্যাটাগরি বাটন তৈরি
             const categoryBar = document.getElementById('category-bar');
             categories.forEach(cat => {
                 const btn = document.createElement('button');
@@ -210,47 +223,37 @@
             });
 
             if (allChannels.length > 0) {
-                initPlayer(allChannels[0].url); // প্রথম চ্যানেল অটো-প্লে
+                initPlayer(allChannels[0].url, true); // প্রথম চ্যানেল ব্যাকগ্রাউন্ডে অটো-প্লে (মিউটেড)
                 renderChannels(allChannels);
             }
         });
 
-    // চ্যানেল রেন্ডারিং ফাংশন
     function renderChannels(channels) {
         const container = document.getElementById('channel-container');
         container.innerHTML = '';
-        
         channels.forEach(ch => {
             const li = document.createElement('li');
             li.innerHTML = `<img src="${ch.image || 'https://i.postimg.cc/mD1VCt2C/RS-Live.png'}" onerror="this.src='https://i.postimg.cc/mD1VCt2C/RS-Live.png'"><p class="channel-title">${ch.name}</p>`;
             li.addEventListener('click', () => {
-                initPlayer(ch.url);
+                initPlayer(ch.url, false); // লিস্ট থেকে কোনো চ্যানেলে ক্লিক করলে সরাসরি সাউন্ডসহ প্লে হবে
                 if(window.innerWidth < 768) window.scrollTo({ top: 0, behavior: 'smooth' });
             });
             container.appendChild(li);
         });
     }
 
-    // ক্যাটাগরি ফিল্টারিং ফিল্টার
     function filterCategory(category, element) {
-        // একটিভ ক্লাস পরিবর্তন
         document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
         if (element) element.classList.add('active');
         else document.querySelector('.category-btn').classList.add('active');
 
-        if (category === 'ALL') {
-            renderChannels(allChannels);
-        } else {
-            const filtered = allChannels.filter(ch => ch.category === category);
-            renderChannels(filtered);
-        }
+        if (category === 'ALL') renderChannels(allChannels);
+        else renderChannels(allChannels.filter(ch => ch.category === category));
     }
 
-    // সার্চ ফিল্টার
     document.getElementById('channelSearch').addEventListener('input', function() {
         const query = this.value.toLowerCase().trim();
-        const filtered = allChannels.filter(ch => ch.name.toLowerCase().includes(query));
-        renderChannels(filtered);
+        renderChannels(allChannels.filter(ch => ch.name.toLowerCase().includes(query)));
     });
     </script>
 </body>
