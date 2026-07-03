@@ -36,8 +36,11 @@
             margin-bottom: 15px !important;
         }
         
-        /* স্ট্যান্ডার্ড ভিউ কন্টেইনার */
-        .tv-view .embed-responsive {
+        /* 📺 ভিডিও প্লেয়ার এরিয়া (সোজা স্ক্রিন ও পিসির জন্য সাইজ ফিক্সড) */
+        .video-container-box {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* ১৬:৯ পারফেক্ট রেশিও */
             border: 2px solid rgba(0, 240, 255, 0.2);
             border-radius: 16px;
             background: #000;
@@ -45,13 +48,16 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0, 240, 255, 0.1);
         }
         
-        /* ভিডিও পারফেক্ট ফুল স্ক্রিন ও ক্রপ প্রটেকশন মেকানিজম */
+        /* ভিডিও আইফ্রেম স্টাইল (ভিডিও কাটা যাবে না, সম্পূর্ণ ফিট হবে) */
         iframe {
-            border: 0 !important;
-            display: block;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
             width: 100% !important;
             height: 100% !important;
-            object-fit: fill !important; /* ভিডিও না কেটে সম্পূর্ণ স্ক্রিন জুড়ে ফিল করবে */
+            border: 0 !important;
+            display: block;
+            object-fit: fill !important; /* ভিডিওর রেশিও স্ক্রিন অনুযায়ী ফিল করবে */
         }
 
         /* ইন্ট্রো লোডার */
@@ -210,16 +216,16 @@
             .channel-title { font-size: 12px; }
         }
 
-        /* 🚨 মোবাইল ল্যান্ডস্কেপ (Rotate/ফোন কাত করা অবস্থা) আল্ট্রা ফুল স্ক্রিন ইঞ্জিন */
+        /* 🚨 মোবাইল ল্যান্ডস্কেপ (Rotate অবস্থা) আল্ট্রা ফুল স্ক্রিন ইঞ্জিন ফিক্স */
         @media (max-width: 950px) and (orientation: landscape) {
             body { padding: 0 !important; margin: 0 !important; overflow: hidden !important; background: #000 !important; }
             .tv-area { margin: 0 !important; padding: 0 !important; width: 100vw !important; height: 100vh !important; max-width: 100% !important; }
             .row { margin: 0 !important; padding: 0 !important; }
             
-            /* ফোন কাত করলে হেডার, সার্চবার এবং নোটিশবার হাইড হয়ে ভিডিওর জন্য জায়গা খালি করবে */
+            /* ল্যান্ডস্কেপে অপ্রয়োজনীয় এলিমেন্ট হাইড */
             .top-bar-wrapper, .marquee-container, .channel-list { display: none !important; }
             
-            /* প্লেয়ার এরিয়াকে পুরো মোবাইল ডিসপ্লে সাইজ দেওয়া হলো */
+            /* প্লেয়ারকে পুরো মোবাইল স্ক্রিনের সাইজ দেওয়া হলো */
             .tv-view { 
                 position: fixed !important;
                 top: 0 !important;
@@ -230,12 +236,12 @@
                 padding: 0 !important;
                 z-index: 999999 !important;
             }
-            .tv-view .embed-responsive { 
+            .video-container-box { 
                 border: none !important; 
                 border-radius: 0 !important; 
                 width: 100% !important;
                 height: 100% !important; 
-                padding-bottom: 0 !important; /* বুটস্ট্র্যাপের ১৬:৯ প্যাডিং রিমুভ */
+                padding-top: 0 !important; /* প্যাডিং ওভাররাইড */
             }
         }
     </style>
@@ -272,7 +278,7 @@
 
         <div class="row">
             <div class="col-xs-12 col-md-9 tv-view">
-                <div class="embed-responsive">
+                <div class="video-container-box">
                     <iframe id="tv-player-iframe" name="player" allowfullscreen allow="autoplay; encrypted-media" src=""></iframe>
                 </div>
             </div>
@@ -372,7 +378,6 @@
     }
     
     function loadChannels() {
-        // ফাস্ট ফোর্স এক্সিট ১ সেকেন্ড পর
         setTimeout(hideLoader, 1000);
 
         fetch(`${RAW_M3U_URL}?_=${Date.now()}`)
