@@ -60,20 +60,37 @@
         }
         .search-box::placeholder { color: rgba(255, 255, 255, 0.5); }
 
-        /* 📜 নোটিশ বার */
+        /* 📜 আপগ্রেডেড নোটিশ বার (নন-স্টপ স্ক্রোলিং ইঞ্জিন) */
         .notice-bar {
             display: flex; align-items: center; gap: 10px;
             padding: 6px 15px; background: rgba(13, 13, 19, 0.8);
             border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+            overflow: hidden; /* বাইরের অংশ হাইড রাখবে */
         }
         .notice-tag { 
             background: var(--text-red); color: white; 
             padding: 2px 6px; border-radius: 4px; font-size: 10px; 
             font-weight: bold; text-transform: uppercase; white-space: nowrap;
+            z-index: 10; /* নোটিশ ট্যাগটি টেক্সটের উপরে ভাসমান থাকবে */
         }
-        .notice-bar marquee { 
+        
+        /* 🚀 নতুন সিএসএস মার্কি টেক্সট কন্টেইনার */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            width: 100%;
+            display: flex;
+        }
+        .marquee-text {
+            display: inline-block;
             color: var(--text-red); 
-            font-weight: bold; font-size: 11px; margin: 0;
+            font-weight: bold; font-size: 11px;
+            padding-left: 100%;
+            animation: continuousMarquee 25s linear infinite; /* ২৫ সেকেন্ড পর পর আনলিমিটেড ঘুরবে */
+        }
+        @keyframes continuousMarquee {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
         }
 
         /* 💻 মেইন লেআউট কন্টেইনার */
@@ -82,7 +99,7 @@
             flex-direction: column;
             flex-grow: 1;
             overflow: hidden;
-            height: calc(100vh - 85px); /* নোটিশ ও হেডারের পর বাকি অংশ */
+            height: calc(100vh - 85px);
         }
 
         /* 📺 ভিডিও প্লেয়ার কন্টেইনার */
@@ -181,16 +198,16 @@
         /* 💻 ল্যাপটপ এবং ডেস্কটপ স্ক্রিনের জন্য ফিক্সড ডুয়াল প্যানেল লেআউট */
         @media (min-width: 992px) {
             .main-content-layout {
-                flex-direction: row; /* বামে প্লেয়ার, ডানে চ্যানেল লিস্ট */
+                flex-direction: row;
             }
             .player-wrapper {
-                width: 65%; /* প্লেয়ার স্ক্রিনের ৬৫% জায়গা নেবে */
-                height: 100%; /* সম্পূর্ণ হাইট জোড়া থাকবে */
+                width: 65%;
+                height: 100%;
                 aspect-ratio: auto;
             }
             .list-side-container {
-                width: 35%; /* চ্যানেল লিস্ট ডানপাশের ৩৫% জায়গা নেবে */
-                height: 100%; /* স্ক্রিনের ভেতরেই ফিক্সড থাকবে */
+                width: 35%;
+                height: 100%;
                 border-left: 1px solid rgba(255, 255, 255, 0.05);
             }
             .search-box { width: 160px; }
@@ -218,7 +235,10 @@
         </div>
         <div class="notice-bar">
             <div class="notice-tag">NOTICE</div>
-            <marquee scrollamount="4">⚠️ প্রিয় দর্শক, আপনাদের বিনোদনের সেরা সঙ্গী SA TV। কোনো চ্যানেল সাময়িকভাবে কাজ না করলে একটু পর আবার চেষ্টা করুন। ধন্যবাদ আমাদের সাথে থাকার জন্য ❤️</marquee>
+            <!-- 🚀 আপগ্রেডেড নন-স্টপ স্ক্রোলিং টেক্সট ইঞ্জিন -->
+            <div class="marquee-container">
+                <div class="marquee-text">⚠️ প্রিয় দর্শক, আপনাদের বিনোদনের সেরা সঙ্গী SA TV। কোনো চ্যানেল সাময়িকভাবে কাজ না করলে একটু পর আবার চেষ্টা করুন। ধন্যবাদ আমাদের সাথে থাকার জন্য ❤️</div>
+            </div>
         </div>
     </div>
 
