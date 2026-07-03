@@ -20,10 +20,12 @@
             width: 100%; height: 100vh; margin: 0; padding: 0;
             background-color: var(--bg-dark); color: #fff;
             font-family: 'Segoe UI', Roboto, sans-serif; overflow: hidden;
-            display: flex; flex-direction: column;
         }
         
-        body { -webkit-user-select: none; user-select: none; }
+        body { 
+            -webkit-user-select: none; user-select: none; 
+            display: flex; flex-direction: column;
+        }
 
         /* 📌 ফিক্সড হেডার ও নোটিশ এরিয়া */
         .fixed-top-section {
@@ -33,7 +35,7 @@
         }
         
         .main-header {
-            padding: 8px 15px;
+            padding: 10px 15px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             display: flex; justify-content: space-between; align-items: center;
         }
@@ -41,30 +43,27 @@
         .brand-sa { color: var(--secondary-glow); }
         .brand-live { color: var(--primary-glow); }
         
-        /* 🔍 আপগ্রেডেড সার্চ বক্স স্টাইল */
+        /* 🔍 আপগ্রেডেড রেসপন্সিভ সার্চ বক্স */
         .search-box {
-            width: 150px; height: 34px; border-radius: 20px;
+            width: 140px; height: 34px; border-radius: 20px;
             border: 1px solid rgba(0, 240, 255, 0.25);
             background: rgba(255, 255, 255, 0.06); color: #fff;
             padding: 0 15px; font-size: 12px; outline: none;
             transition: all 0.3s ease;
             backdrop-filter: blur(5px);
         }
-        /* সার্চ বক্সে ক্লিক করলে যে নিয়ন কালার গ্লো করবে */
         .search-box:focus { 
             border-color: var(--primary-glow); 
             background: rgba(0, 240, 255, 0.05);
             box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
-            width: 170px; /* ক্লিক করলে হালকা একটু বড় হবে দেখতে সুন্দর লাগে */
+            width: 160px;
         }
-        .search-box::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
+        .search-box::placeholder { color: rgba(255, 255, 255, 0.5); }
 
         /* 📜 নোটিশ বার */
         .notice-bar {
             display: flex; align-items: center; gap: 10px;
-            padding: 5px 15px; background: rgba(13, 13, 19, 0.8);
+            padding: 6px 15px; background: rgba(13, 13, 19, 0.8);
             border-bottom: 1px solid rgba(0, 240, 255, 0.1);
         }
         .notice-tag { 
@@ -74,10 +73,18 @@
         }
         .notice-bar marquee { 
             color: var(--text-red); 
-            font-weight: bold; font-size: 11px;
+            font-weight: bold; font-size: 11px; margin: 0;
         }
 
-        /* 📺 ফিক্সড ভিডিও প্লেয়ার */
+        /* 💻 ল্যাপটপ এবং মোবাইলের জন্য মেইন কন্টেন্ট লেআউট */
+        .main-content-layout {
+            display: flex;
+            flex-direction: column; /* মোবাইলের জন্য উপর-নিচ */
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        /* 📺 ভিডিও প্লেয়ার কন্টেইনার */
         .player-wrapper {
             width: 100%; aspect-ratio: 16/9; background: #000;
             flex-shrink: 0; position: relative;
@@ -104,9 +111,17 @@
             50% { transform: scale(1.05); }
         }
 
+        /* 📁 ডানদিকের অংশ (ক্যাটাগরি + চ্যানেল লিস্ট) - ল্যাপটপে এটি ডানপাশে যাবে */
+        .list-side-container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
         /* 📁 স্ক্রোলিং ক্যাটাগরি বার */
         .category-container {
-            display: flex; gap: 6px; overflow-x: auto; padding: 10px 15px;
+            display: flex; gap: 6px; overflow-x: auto; padding: 12px 15px;
             background: #06060c; flex-shrink: 0;
             scrollbar-width: none; -ms-overflow-style: none;
         }
@@ -124,10 +139,18 @@
         .channel-list-container {
             flex-grow: 1; overflow-y: auto; padding: 0 15px 15px;
         }
+        
+        /* গ্রিড লেআউট: মোবাইলে ১টি লাইন, ট্যাবে ২টি, ল্যাপটপে ৩টি */
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 8px;
+        }
+
         .thumbnail-card {
             display: flex; align-items: center; gap: 12px;
             background: var(--card-bg); padding: 10px; border-radius: 10px;
-            margin-bottom: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.03);
+            cursor: pointer; border: 1px solid rgba(255,255,255,0.03);
             transition: all 0.2s ease; justify-content: space-between;
         }
         .card-left { display: flex; align-items: center; gap: 12px; }
@@ -140,9 +163,8 @@
             border: 1px solid var(--primary-glow);
             box-shadow: inset 0 0 8px rgba(0, 240, 255, 0.2);
         }
-        .thumbnail-card.active-play .channel-name {
-            color: var(--primary-glow);
-        }
+        .thumbnail-card.active-play .channel-name { color: var(--primary-glow); }
+        
         .live-indicator {
             display: none; background: rgba(255, 0, 85, 0.15); color: var(--secondary-glow);
             font-size: 9px; font-weight: bold; padding: 3px 6px; border-radius: 4px;
@@ -156,10 +178,34 @@
             100% { opacity: 1; }
         }
 
-        /* ল্যান্ডস্কেপ ফুলস্ক্রিন */
+        /* 💻 ল্যাপটপ এবং বড় স্ক্রিনের জন্য রেসপন্সিভ ম্যাজিক (Media Query) */
+        @media (min-width: 992px) {
+            .main-content-layout {
+                flex-direction: row; /* বামে প্লেয়ার, ডানে লিস্ট */
+            }
+            .player-wrapper {
+                width: 65%; /* প্লেয়ার স্ক্রিনের ৬৫% জায়গা নেবে */
+                height: calc(100vh - 95px); /* বাকি পুরোটা হাইট */
+                aspect-ratio: auto;
+            }
+            .list-side-container {
+                width: 35%; /* লিস্ট ৩৫% জায়গা নেবে */
+                border-left: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            .channel-grid {
+                grid-template-columns: repeat(1, 1fr); /* ল্যাপটপের প্যানে ১ কলাম বেস্ট */
+            }
+            .search-box { width: 160px; }
+            .search-box:focus { width: 200px; }
+        }
+
+        @media (min-width: 600px) and (max-width: 991px) {
+            .channel-grid { grid-template-columns: repeat(2, 1fr); } /* ট্যাবলেট মোড */
+        }
+
+        /* ল্যান্ডস্কেপ ফুলস্ক্রিন (মোবাইল কাত করলে) */
         body.fullscreen-mode .fixed-top-section, 
-        body.fullscreen-mode .category-container, 
-        body.fullscreen-mode .channel-list-container { display: none !important; }
+        body.fullscreen-mode .list-side-container { display: none !important; }
         body.fullscreen-mode .player-wrapper { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 99999; }
         body.fullscreen-mode #player, body.fullscreen-mode video { width: 100vw !important; height: 100vh !important; object-fit: fill !important; }
     </style>
@@ -170,7 +216,6 @@
     <div class="fixed-top-section">
         <div class="main-header">
             <div class="brand-logo"><span class="brand-sa">SA</span><span class="brand-live">TV</span></div>
-            <!-- আপডেটেড সার্চ বক্স -->
             <input type="text" class="search-box" id="channelSearch" placeholder="Search channel...">
         </div>
         <div class="notice-bar">
@@ -179,24 +224,35 @@
         </div>
     </div>
 
-    <!-- ভিডিও প্লেয়ার কন্টেইনার -->
-    <div class="player-wrapper">
-        <div id="player"></div>
-        <div id="unmute-overlay" onclick="handleUnmute()">
-            <div class="unmute-btn">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM12 4L9.91 6.09 12 8.18V4zm-7.7 1.49L3 6.79 7.21 11H3v2h4l5 5v-6.18l4.18 4.18c-.5.33-1.05.59-1.68.72v2.03c1.17-.23 2.25-.79 3.14-1.57l2.55 2.55 1.29-1.29L4.3 5.49z"/></svg>
-                টাচ করে সাউন্ড অন করুন
+    <!-- মেইন রেসপন্সিভ লেআউট শুরু -->
+    <div class="main-content-layout">
+        
+        <!-- 📺 ভিডিও প্লেয়ার অংশ -->
+        <div class="player-wrapper">
+            <div id="player"></div>
+            <div id="unmute-overlay" onclick="handleUnmute()">
+                <div class="unmute-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM12 4L9.91 6.09 12 8.18V4zm-7.7 1.49L3 6.79 7.21 11H3v2h4l5 5v-6.18l4.18 4.18c-.5.33-1.05.59-1.68.72v2.03c1.17-.23 2.25-.79 3.14-1.57l2.55 2.55 1.29-1.29L4.3 5.49z"/></svg>
+                    টাচ করে সাউন্ড অন করুন
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- ক্যাটাগরি বার -->
-    <div class="category-container" id="category-bar">
-        <button class="category-btn active" id="btn-ALL" onclick="filterCategory('ALL')">ALL</button>
-    </div>
+        <!-- 📁 লিস্ট ও ক্যাটাগরি অংশ -->
+        <div class="list-side-container">
+            <!-- ক্যাটাগরি বার -->
+            <div class="category-container" id="category-bar">
+                <button class="category-btn active" id="btn-ALL" onclick="filterCategory('ALL')">ALL</button>
+            </div>
 
-    <!-- চ্যানেল লিস্ট এরিয়া -->
-    <div class="channel-list-container" id="channel-container"></div>
+            <!-- চ্যানেল লিস্ট এরিয়া -->
+            <div class="channel-list-container">
+                <div class="channel-grid" id="channel-container"></div>
+            </div>
+        </div>
+
+    </div>
+    <!-- মেইন রেসপন্সিভ লেআউট শেষ -->
 
     <script>
         let mainPlayer = null;
