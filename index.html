@@ -36,9 +36,8 @@
     <script>
     !function(){"use strict";if(window.location.protocol==="view-source:"){window.location.href="#" }console.clear();console.log=function(){};console.warn=function(){};console.error=function(){};console.info=function(){};function debuggerCheck(){var start=performance.now();debugger;var end=performance.now();if(end-start>100){window.location.href="about:blank"}}setInterval(debuggerCheck,1e3);document.addEventListener('keydown',function(e){var key=e.keyCode||e.which;if(key===123||(e.ctrlKey&&e.shiftKey&&(key===73||key===74))||(e.ctrlKey&&key===85)||(e.ctrlKey&&key===83)||(e.ctrlKey&&key===80)||(e.ctrlKey&&key===67)||(e.ctrlKey&&key===86)||(e.ctrlKey&&key===88)||key===44){e.preventDefault();e.stopPropagation();return false}});document.addEventListener('contextmenu',function(e){e.preventDefault();return false})}();
     
-    // হাই-স্পিড ডেটা রেন্ডারিং মেকানিজম (CORS বাইপাস করার জন্য সরাসরি ও ফাস্ট সার্ভার লিংক)
+    // আপনার অরিজিনাল M3U প্লেলিস্ট লিংক
     const M3U_URL = 'https://raw.githubusercontent.com/ahmedstore75/Iptvbdlive/refs/heads/main/mixiptvchannel.m3u';
-    const PROXY_URL = 'https://api.allorigins.win/get?url=' + encodeURIComponent(M3U_URL) + '&_=`' + Date.now() + '`';
     
     const container = document.getElementById('channel-container');
     const searchInput = document.getElementById('channelSearch');
@@ -117,30 +116,64 @@
         });
     }
     
-    function loadChannels(){
-        // সাকসেস রেট বাড়ানোর জন্য মাল্টি-লেয়ার রিকোয়েস্ট পাইপলাইন
-        fetch(PROXY_URL)
-            .then(res => res.json())
-            .then(data => { 
-                if (data && data.contents) {
-                    renderChannels(parseM3U(data.contents)); 
-                } else { throw new Error(); }
-            })
-            .catch(() => {
-                // অল্টারনেটিভ ক্লাউড ফ্লেয়ার ওয়ার্কার ইঞ্জিন (ফলব্যাক ২)
-                fetch('https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(M3U_URL))
-                    .then(res => res.text())
-                    .then(data => renderChannels(parseM3U(data)))
-                    .catch(() => {
-                        // লোকাল এবং গিটহাব ডাইরেক্ট ফেচ (ফলব্যাক ৩)
-                        fetch(M3U_URL)
-                            .then(res => res.text())
-                            .then(data => renderChannels(parseM3U(data)))
-                            .catch(() => {
-                                container.innerHTML = `<p style="color:#ff6b6b;text-align:center;padding:20px;">⚠️ চ্যানেল লোড ব্যর্থ।<br><span style="font-size:12px;color:#888;">ফাইলটি সম্পূর্ণ কপি করে GitHub Pages বা Vercel হোস্টিংয়ে লাইভ করে রান করুন।</span></p>`;
-                            });
-                    });
-            });
+    // ৩টি পপুলার প্রক্সি এপিআই-ভিত্তিক হাই-স্পিড চেইন মেকানিজম
+    async function loadChannels() {
+        const timestamp = Date.now();
+        
+        // ১. AllOrigins API (পপুলার এবং ফাস্ট JSON-ভিত্তিক প্রক্সি)
+        const proxy1 = `https://api.allorigins.win/get?url=${encodeURIComponent(M3U_URL)}&_=${timestamp}`;
+        // ২. Codetabs CORS Proxy (ক্লাউডফ্লেয়ার ব্যাকড গ্লোবাল প্রক্সি)
+        const proxy2 = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(M3U_URL)}`;
+        // ৩. Cors-Anywhere (ওপেন-সোর্স পাবলিক রিলে গেটওয়ে)
+        const proxy3 = `https://cors-anywhere.herokuapp.com/${M3U_URL}`;
+
+        // ১ম এপিআই দিয়ে ট্রাই
+        try {
+            let res = await fetch(proxy1);
+            if (!res.ok) throw new Error();
+            let data = await res.json();
+            if (data && data.contents) {
+                renderChannels(parseM3U(data.contents));
+                return; // সাকসেস হলে এখানেই শেষ
+            }
+        } catch (e) {
+            console.log("Proxy 1 failed, trying Proxy 2...");
+        }
+
+        // ২য় এপিআই দিয়ে ট্রাই
+        try {
+            let res = await fetch(proxy2);
+            if (!res.ok) throw new Error();
+            let text = await res.text();
+            if (text) {
+                renderChannels(parseM3U(text));
+                return;
+            }
+        } catch (e) {
+            console.log("Proxy 2 failed, trying Proxy 3...");
+        }
+
+        // ৩য় এপিআই দিয়ে ট্রাই
+        try {
+            let res = await fetch(proxy3);
+            if (!res.ok) throw new Error();
+            let text = await res.text();
+            if (text) {
+                renderChannels(parseM3U(text));
+                return;
+            }
+        } catch (e) {
+            console.log("Proxy 3 failed, trying Direct Fetch...");
+        }
+
+        // ফাইনাল ফলব্যাক: গিটহাব ডিরেক্ট রিকোয়েস্ট (ব্রাউজার এক্সটেনশন বা লোকাল পলিসি ফ্রেন্ডলি সার্ভারের জন্য)
+        try {
+            let res = await fetch(M3U_URL);
+            let text = await res.text();
+            renderChannels(parseM3U(text));
+        } catch (e) {
+            container.innerHTML = `<p style="color:#ff6b6b;text-align:center;padding:20px;">⚠️ চ্যানেল লোড ব্যর্থ।<br><span style="font-size:12px;color:#888;">CORS সিকিউরিটির কারণে ফাইলটি Vercel, Netlify বা GitHub Pages হোস্টিংয়ে আপলোড করে লাইভ লিংকটি চেক করুন।</span></p>`;
+        }
     }
 
     window.addEventListener('DOMContentLoaded', function(){
