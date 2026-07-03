@@ -36,11 +36,11 @@
             margin-bottom: 15px !important;
         }
         
-        /* 📺 ভিডিও প্লেয়ার এরিয়া (সোজা স্ক্রিন ও পিসির জন্য সাইজ ফিক্সড) */
+        /* 📺 পোর্ট্রেট (সোজা) মোডের জন্য প্লেয়ার সাইজ */
         .video-container-box {
             position: relative;
             width: 100%;
-            padding-top: 56.25%; /* ১৬:৯ পারফেক্ট রেশিও */
+            padding-top: 56.25%; /* ১৬:৯ স্ট্যান্ডার্ড সাইজ */
             border: 2px solid rgba(0, 240, 255, 0.2);
             border-radius: 16px;
             background: #000;
@@ -48,7 +48,7 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0, 240, 255, 0.1);
         }
         
-        /* ভিডিও আইফ্রেম স্টাইল (ভিডিও কাটা যাবে না, সম্পূর্ণ ফিট হবে) */
+        /* 🚀 আল্ট্রা ফুল স্ক্রিন ইঞ্জিন (কালো বর্ডার ও ক্রপ মুক্ত) */
         iframe {
             position: absolute !important;
             top: 0 !important;
@@ -57,7 +57,7 @@
             height: 100% !important;
             border: 0 !important;
             display: block;
-            object-fit: fill !important; /* ভিডিওর রেশিও স্ক্রিন অনুযায়ী ফিল করবে */
+            object-fit: fill !important; /* স্ট্রেচ করে কালো বর্ডার সম্পূর্ণ দূর করবে */
         }
 
         /* ইন্ট্রো লোডার */
@@ -216,16 +216,29 @@
             .channel-title { font-size: 12px; }
         }
 
-        /* 🚨 মোবাইল ল্যান্ডস্কেপ (Rotate অবস্থা) আল্ট্রা ফুল স্ক্রিন ইঞ্জিন ফিক্স */
+        /* 🚨 মোবাইল ল্যান্ডস্কেপ (Rotate) মোড - ১০০% ফুল স্ক্রিন নো বর্ডার সিস্টেম */
         @media (max-width: 950px) and (orientation: landscape) {
-            body { padding: 0 !important; margin: 0 !important; overflow: hidden !important; background: #000 !important; }
-            .tv-area { margin: 0 !important; padding: 0 !important; width: 100vw !important; height: 100vh !important; max-width: 100% !important; }
-            .row { margin: 0 !important; padding: 0 !important; }
+            html, body { 
+                width: 100% !important;
+                height: 100% !important;
+                padding: 0 !important; 
+                margin: 0 !important; 
+                overflow: hidden !important; 
+                background: #000 !important; 
+            }
+            .tv-area { 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                width: 100vw !important; 
+                height: 100vh !important; 
+                max-width: 100% !important; 
+            }
+            .row { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; }
             
-            /* ল্যান্ডস্কেপে অপ্রয়োজনীয় এলিমেন্ট হাইড */
+            /* ল্যান্ডস্কেপে হেডার, নোটিশ ও চ্যানেল লিস্ট হাইড */
             .top-bar-wrapper, .marquee-container, .channel-list { display: none !important; }
             
-            /* প্লেয়ারকে পুরো মোবাইল স্ক্রিনের সাইজ দেওয়া হলো */
+            /* প্লেয়ারকে পুরো মোবাইল ডিসপ্লের উইডথ ও হাইটে লক করা হলো */
             .tv-view { 
                 position: fixed !important;
                 top: 0 !important;
@@ -239,9 +252,14 @@
             .video-container-box { 
                 border: none !important; 
                 border-radius: 0 !important; 
-                width: 100% !important;
-                height: 100% !important; 
-                padding-top: 0 !important; /* প্যাডিং ওভাররাইড */
+                width: 100vw !important;
+                height: 100vh !important; 
+                padding-top: 0 !important; 
+            }
+            iframe {
+                width: 100vw !important;
+                height: 100vh !important;
+                object-fit: fill !important; /* স্ক্রিনের দুই পাশের কালো বর্ডার দূর করার চূড়ান্ত কমান্ড */
             }
         }
     </style>
@@ -295,7 +313,7 @@
     // সিকিউরিটি লেয়ার
     !function(){"use strict";if(window.location.protocol==="view-source:"){window.location.href="#"}console.clear();console.log=function(){};console.warn=function(){};console.error=function(){};function debuggerCheck(){var start=performance.now();debugger;var end=performance.now();if(end-start>100){window.location.href="about:blank"}}setInterval(debuggerCheck,1e3);document.addEventListener('keydown',function(e){var key=e.keyCode||e.which;if(key===123||(e.ctrlKey&&e.shiftKey&&(key===73||key===74))||(e.ctrlKey&&key===85)||(e.ctrlKey&&key===83)){e.preventDefault();return false}});document.addEventListener('contextmenu',function(e){e.preventDefault();return false})}();
     
-    // গিটহাব র (Raw) লিঙ্ক
+    // গিটহাব র লিঙ্ক
     const RAW_M3U_URL = 'https://raw.githubusercontent.com/ahmedstore75/Iptvbdlive/main/mixiptvchannel.m3u';
     
     const container = document.getElementById('channel-container');
