@@ -7,56 +7,49 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
     <style>
-        :root { --primary-glow: #00f0ff; --bg-dark: #06060c; --card-bg: rgba(18, 18, 29, 0.6); }
-        body { background-color: var(--bg-dark); color: #fff; font-family: sans-serif; margin: 0; padding: 0; }
+        :root { --primary-glow: #00f0ff; --bg-dark: #06060c; }
+        body { background-color: var(--bg-dark); color: #fff; font-family: sans-serif; margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; }
         
-        /* 🚀 সুসংহত হেডার এরিয়া */
-        .main-header {
-            background: rgba(10, 10, 18, 0.95);
-            padding: 8px 15px;
-            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
-            display: flex; flex-direction: column; gap: 5px;
-        }
-        .top-row { display: flex; align-items: center; justify-content: space-between; }
-        .brand-logo { font-size: 20px; font-weight: 900; }
-        .brand-sa { color: #ff0055; } .brand-live { color: #00f0ff; }
-        .search-box { width: 140px; height: 32px; border-radius: 8px; border: 1px solid #333; background: #000; color: #fff; padding-left: 10px; font-size: 12px; }
+        /* হেডার এবং প্লেয়ার ফিক্সড রাখতে */
+        .header-section { position: sticky; top: 0; z-index: 100; background: #06060c; }
+        .main-header { padding: 8px 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; }
+        .brand-logo { font-size: 18px; font-weight: 900; }
+        .search-box { width: 120px; height: 30px; border-radius: 6px; border: 1px solid #333; background: #000; color: #fff; padding-left: 10px; font-size: 12px; }
+        .notice-bar { padding: 5px 15px; font-size: 11px; background: #111; color: #ccc; border-bottom: 1px solid #222; }
 
-        /* 📜 নোটিশ বার (হেডারের ভেতরে চিকন) */
-        .notice-bar { font-size: 11px; color: #ccc; border-top: 1px solid #222; padding-top: 5px; }
-        
-        /* প্লেয়ার বক্স */
-        .video-container-box { position: relative; width: 100%; padding-top: 56.25%; background: #000; }
-        #player { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+        /* প্লেয়ার এরিয়া (স্ক্রল করলেও নড়বে না) */
+        .player-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; flex-shrink: 0; }
+        #player { width: 100% !important; height: 100% !important; }
 
-        /* ক্যাটাগরি ও লিস্ট */
-        .category-container { display: flex; gap: 5px; overflow-x: auto; padding: 10px; }
-        .category-btn { background: #1a1a2e; color: #fff; border: 1px solid #333; padding: 5px 12px; border-radius: 15px; font-size: 11px; white-space: nowrap; }
+        /* ক্যাটাগরি এবং চ্যানেল লিস্ট */
+        .category-container { display: flex; gap: 8px; overflow-x: auto; padding: 10px; background: #06060c; }
+        .category-btn { background: #1a1a2e; border: 1px solid #333; color: #fff; padding: 5px 12px; border-radius: 15px; font-size: 11px; white-space: nowrap; }
         .category-btn.active { background: var(--primary-glow); color: #000; font-weight: bold; }
-        .channel-list { padding: 0 10px; }
-        .thumbnail { display: flex; align-items: center; gap: 10px; background: #111; padding: 8px; border-radius: 8px; margin-bottom: 8px; cursor: pointer; }
-        .thumbnail img { width: 35px; height: 35px; border-radius: 5px; }
+        
+        /* চ্যানেল লিস্টের এরিয়া ফিক্স */
+        .channel-list { flex-grow: 1; overflow-y: auto; padding: 0 10px 20px 10px; }
+        .thumbnail { display: flex; align-items: center; gap: 12px; background: #111; padding: 8px; border-radius: 8px; margin-bottom: 8px; cursor: pointer; border: 1px solid #222; }
+        .thumbnail img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; background: #333; }
 
-        /* ফুল স্ক্রিন মোড */
-        body.fullscreen-mode .main-header, body.fullscreen-mode .category-container, body.fullscreen-mode .channel-list { display: none !important; }
-        body.fullscreen-mode .video-container-box { position: fixed; inset: 0; padding-top: 0; z-index: 9999; }
+        /* ল্যান্ডস্কেপ মোড */
+        body.fullscreen-mode .header-section, body.fullscreen-mode .category-container, body.fullscreen-mode .channel-list { display: none !important; }
+        body.fullscreen-mode .player-wrapper { position: fixed; inset: 0; width: 100vw; height: 100vh; aspect-ratio: auto; z-index: 9999; }
         body.fullscreen-mode video { object-fit: fill !important; }
     </style>
 </head>
 <body>
 
-    <!-- একক হেডার এরিয়া (লোগো, সার্চ ও নোটিশ সব একসাথে) -->
-    <div class="main-header">
-        <div class="top-row">
-            <div class="brand-logo"><span class="brand-sa">SA</span><span class="brand-live">TV</span></div>
+    <div class="header-section">
+        <div class="main-header">
+            <div class="brand-logo"><span style="color:#ff0055">SA</span><span style="color:#00f0ff">TV</span></div>
             <input type="text" class="search-box" id="channelSearch" placeholder="Search...">
         </div>
         <div class="notice-bar">
-            <marquee>⚠️ স্বাগতম SA TV তে। কোনো চ্যানেল না চললে একটু অপেক্ষা করুন অথবা অন্য ক্যাটাগরিতে চেক করুন।</marquee>
+            <marquee>⚠️ স্বাগতম SA TV তে। চ্যানেল না চললে একটু অপেক্ষা করুন।</marquee>
         </div>
     </div>
 
-    <div class="video-container-box">
+    <div class="player-wrapper">
         <div id="player"></div>
     </div>
 
@@ -71,41 +64,41 @@
         let allChannels = [];
         const RAW_M3U_URL = 'https://raw.githubusercontent.com/ahmedstore75/Iptvbdlive/main/mixiptvchannel.m3u';
 
-        function initPlayer(url, mute = true) {
+        function initPlayer(url) {
             if(mainPlayer) mainPlayer.destroy();
-            mainPlayer = new Clappr.Player({source: url, parentId: "#player", width: '100%', height: '100%', autoPlay: true, mute: mute});
+            mainPlayer = new Clappr.Player({source: url, parentId: "#player", width: '100%', height: '100%', autoPlay: true, mute: false});
             setTimeout(() => document.querySelector('video').style.setProperty('object-fit', 'fill', 'important'), 500);
         }
 
         fetch(RAW_M3U_URL).then(res => res.text()).then(data => {
             const lines = data.split('\n');
             let catSet = new Set();
-            lines.forEach((line, i) => {
-                if(line.startsWith('#EXTINF:')) {
-                    let name = line.split(',')[1];
-                    let cat = (line.match(/group-title="([^"]+)"/) || [])[1] || 'OTHERS';
+            for(let i=0; i<lines.length; i++) {
+                if(lines[i].startsWith('#EXTINF:')) {
+                    let info = lines[i];
+                    let name = info.split(',')[1];
+                    let logo = (info.match(/tvg-logo="([^"]+)"/) || [])[1] || 'https://i.postimg.cc/mD1VCt2C/RS-Live.png';
+                    let cat = (info.match(/group-title="([^"]+)"/) || [])[1] || 'OTHERS';
                     catSet.add(cat.toUpperCase());
-                    allChannels.push({name, cat: cat.toUpperCase(), url: lines[i+1]});
+                    allChannels.push({name, logo, cat: cat.toUpperCase(), url: lines[i+1]});
                 }
-            });
-            
-            // ক্যাটাগরি বাটন
-            catSet.forEach(c => {
-                document.getElementById('category-bar').innerHTML += `<button class="category-btn" onclick="filterCategory('${c}')">${c}</button>`;
-            });
+            }
+            catSet.forEach(c => document.getElementById('category-bar').innerHTML += `<button class="category-btn" onclick="filterCategory('${c}')">${c}</button>`);
             render(allChannels);
             initPlayer(allChannels[0].url);
         });
 
         function render(arr) {
             document.getElementById('channel-container').innerHTML = arr.map(ch => 
-                `<div class="thumbnail" onclick="initPlayer('${ch.url}', false)">
+                `<div class="thumbnail" onclick="initPlayer('${ch.url}')">
+                    <img src="${ch.logo}" onerror="this.src='https://i.postimg.cc/mD1VCt2C/RS-Live.png'">
                     <span>${ch.name}</span>
                 </div>`).join('');
         }
 
         function filterCategory(cat) {
             render(cat === 'ALL' ? allChannels : allChannels.filter(c => c.cat === cat));
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.toggle('active', b.innerText === cat));
         }
 
         document.getElementById('channelSearch').oninput = (e) => {
