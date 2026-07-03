@@ -3,33 +3,43 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
-    <title>SA TV</title>
+    <title>SA TV - Live Streaming</title>
     <link rel="shortcut icon" type="x-icon" href="https://i.postimg.cc/mD1VCt2C/RS-Live.png">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-glow: #00f0ff;
+            --secondary-glow: #ff0055;
+            --bg-dark: #06060c;
+            --card-bg: rgba(18, 18, 29, 0.6);
+        }
+        
         body {
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
-            background-color: #06060c;
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 0%, #121225 0%, var(--bg-dark) 70%);
             overflow-x: hidden;
             color: #fff;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
         
-        /* ভিডিও এরিয়া এবং স্ক্রিন পারফেক্ট ফিট মেকানিজম */
+        /* কন্টেইনার ও লেআউট ফিটিং */
         .tv-area {
             margin-top: 10px !important;
+            padding: 0 15px;
         }
         .tv-view {
             margin-bottom: 15px !important;
         }
         .tv-view .embed-responsive {
-            border: 2px solid #1f2029;
-            border-radius: 12px;
+            border: 2px solid rgba(0, 240, 255, 0.15);
+            border-radius: 16px;
             background: #000;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,.7);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 15px rgba(0, 240, 255, 0.05);
         }
         iframe {
             border: 0 !important;
@@ -38,123 +48,149 @@
             height: 100% !important;
         }
 
-        /* ইন্ট্রো লোডার */
+        /* আল্ট্রা-ফাস্ট ব্লার লোডার */
         #intro-loader {
             position: fixed;
             inset: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center,#0f0f16 0,#040406 100%);
+            background: #040406;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999999;
-            transition: opacity .4s ease, visibility .4s;
+            transition: opacity 0.3s ease, visibility 0.3s;
         }
         .loader-content { text-align: center; }
-        .welcome-text { font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 5px; }
-        .brand-text { font-size: 32px; font-weight: 900; color: #fff; margin: 0; }
-        .brand-text span { color: #00f0ff; }
+        .welcome-text { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 5px; font-weight: bold; }
+        .brand-text { font-size: 36px; font-weight: 900; color: #fff; margin: 0; letter-spacing: 1px; }
+        .brand-text span { color: var(--primary-glow); text-shadow: 0 0 15px rgba(0,240,255,0.5); }
         .loading-dots { display: flex; justify-content: center; gap: 6px; margin-top: 15px; }
-        .loading-dots span { width: 6px; height: 6px; background-color: #ff0055; border-radius: 50%; animation: dotPulse 1.4s infinite ease-in-out both; }
-        .loading-dots span:nth-child(1) { animation-delay: -.32s; background-color: #00f0ff; }
+        .loading-dots span { width: 6px; height: 6px; background-color: var(--secondary-glow); border-radius: 50%; animation: dotPulse 1.2s infinite ease-in-out both; }
+        .loading-dots span:nth-child(1) { animation-delay: -.32s; background-color: var(--primary-glow); }
         .loading-dots span:nth-child(2) { animation-delay: -.16s; }
         @keyframes dotPulse { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
-        /* প্রিমিয়াম হেডার টপ বার */
+        /* মডার্ন টপ বার হেডার */
         .top-bar-wrapper {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
+            gap: 15px;
             width: 100%;
             margin: 10px 0 15px;
-            padding: 12px 15px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, rgba(15,16,28,.95) 0, rgba(8,10,20,.95) 100%);
-            border: 1px solid rgba(0,240,255,.15);
-            box-shadow: 0 8px 25px rgba(0,0,0,.4);
+            padding: 12px 20px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(20, 20, 35, 0.7) 0, rgba(10, 10, 18, 0.8) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .logo-link { text-decoration: none !important; display: flex; align-items: center; }
-        .brand-sa { font-size: 24px; font-weight: 900; color: #fff; }
-        .brand-live { font-size: 24px; font-weight: 900; color: #ff296d; position: relative; margin-left: 2px; }
-        .brand-line-sub { font-size: 10px; color: #8ea1b7; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; font-weight: 700; }
+        .brand-sa { font-size: 26px; font-weight: 900; color: #fff; letter-spacing: 0.5px; }
+        .brand-live { font-size: 26px; font-weight: 900; color: var(--secondary-glow); text-shadow: 0 0 10px rgba(255, 0, 85, 0.3); margin-left: 2px; }
+        .brand-line-sub { font-size: 9px; color: #8ea1b7; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 3px; font-weight: 800; opacity: 0.8; }
         
-        /* সার্চ বক্স */
-        .channel-search-box-premium { position: relative; width: 180px; }
+        /* মডার্ন সার্চ বার */
+        .channel-search-box-premium { position: relative; width: 220px; }
         .channel-search-box-premium input {
-            width: 100%; height: 38px; padding: 0 35px 0 12px; border-radius: 10px;
-            border: 1px solid rgba(0,240,255,.2); background: #121420; color: #fff; font-size: 13px; outline: 0;
+            width: 100%; height: 40px; padding: 0 38px 0 15px; border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(0, 0, 0, 0.4); color: #fff; font-size: 13px; outline: 0;
+            transition: all 0.25s ease;
         }
-        .channel-search-box-premium input:focus { border-color: #00f0ff; box-shadow: 0 0 10px rgba(0,240,255,.2); }
-        .search-icon-inside { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; }
+        .channel-search-box-premium input:focus { 
+            border-color: var(--primary-glow); 
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+            background: rgba(0, 0, 0, 0.6);
+        }
+        .search-icon-inside { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; opacity: 0.7; }
 
-        /* নোটিশ বার (উপরে ফিক্সড পজিশন নিশ্চিত করা হয়েছে) */
+        /* স্টাইলিশ নোটিশ বার */
         .marquee-container {
-            background: #0d0d13;
+            background: rgba(13, 13, 19, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-left: 4px solid var(--secondary-glow);
             color: #fff;
-            padding: 10px 0;
+            padding: 12px 0;
             display: flex;
             align-items: center;
-            border-top: 1px solid #1a1b26;
-            border-bottom: 1px solid #1a1b26;
-            margin-bottom: 15px;
+            border-radius: 10px;
+            margin-bottom: 18px;
             width: 100%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         .notice-label {
-            background: linear-gradient(135deg, #ff0055, #ff5500);
+            background: linear-gradient(135deg, var(--secondary-glow), #ff5500);
             color: #fff;
-            padding: 3px 12px;
+            padding: 4px 14px;
             margin-left: 15px;
-            border-radius: 4px;
-            font-weight: 700;
+            border-radius: 6px;
+            font-weight: 800;
             font-size: 11px;
-            flex-shrink: 0;
+            letter-spacing: 0.5px;
+            box-shadow: 0 3px 10px rgba(255, 0, 85, 0.3);
         }
-        .marquee-container marquee { flex: 1; padding: 0 10px; font-size: 13px; color: #ddd; }
+        .marquee-container marquee { flex: 1; padding: 0 15px; font-size: 13px; color: #e2e8f0; font-weight: 500; }
 
-        /* চ্যানেল লিস্ট এরিয়া (স্ক্রিনের সাথে সামঞ্জস্যপূর্ণ) */
+        /* গ্লসি চ্যানেল লিস্ট এরিয়া (পারফেক্ট হাইট ফিট) */
         .channel-list {
-            max-height: 490px !important;
+            max-height: 500px !important;
             overflow-y: auto !important;
-            padding: 0;
+            padding: 0 5px 0 0;
             margin-bottom: 15px;
         }
-        .channel-list::-webkit-scrollbar { width: 6px; }
-        .channel-list::-webkit-scrollbar-track { background: rgba(0,0,0,.2); }
-        .channel-list::-webkit-scrollbar-thumb { background: #00f0ff; border-radius: 10px; }
+        .channel-list::-webkit-scrollbar { width: 5px; }
+        .channel-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        .channel-list::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.4); border-radius: 10px; }
+        .channel-list::-webkit-scrollbar-thumb:hover { background: var(--primary-glow); }
         
         .thumbnail-slider { list-style: none; padding: 0; margin: 0; }
         .thumbnail-slider li {
-            background: #111116;
-            border: 1px solid #1f2029;
-            border-radius: 8px;
-            padding: 8px;
-            margin-bottom: 8px;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 10px;
             cursor: pointer;
-            transition: all .2s ease;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            backdrop-filter: blur(5px);
         }
         .thumbnail-slider li:hover, .thumbnail-slider li:focus {
-            border-color: #00f0ff;
-            background: #161722;
+            border-color: var(--primary-glow);
+            background: rgba(22, 23, 38, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 240, 255, 0.1);
             outline: 0;
         }
-        .thumbnail-slider li img { width: 36px; height: 36px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
-        .channel-title { color: #fff; font-size: 12px; font-weight: 700; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .thumbnail-slider li img { 
+            width: 42px; height: 42px; 
+            border-radius: 8px; 
+            object-fit: cover; 
+            flex-shrink: 0; 
+            border: 1px solid rgba(255,255,255,0.08);
+            background: #000;
+        }
+        .channel-info-box { min-width: 0; flex: 1; }
+        .channel-title { color: #f1f5f9; font-size: 13px; font-weight: 600; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* ফুটার */
-        .footer-premium { background: #040408; padding: 15px 0; text-align: center; margin-top: 20px; }
-        .copyright { color: #555; font-size: 11px; }
+        /* মিনিমালিস্ট ফুটার */
+        .footer-premium { background: transparent; padding: 20px 0; text-align: center; margin-top: 15px; }
+        .copyright { color: #4a4a6a; font-size: 11px; letter-spacing: 0.5px; }
 
-        /* মোবাইল রেসপন্সিভনেস ফিক্স */
+        /* নিখুঁত মোবাইল স্ক্রিন ফিট রেসপন্সিভনেস */
         @media(max-width: 767px) {
-            .top-bar-wrapper { padding: 10px; }
-            .brand-sa, .brand-live { font-size: 18px; }
-            .channel-search-box-premium { width: 130px; }
-            .channel-list { max-height: 300px !important; margin-top: 10px; }
+            .top-bar-wrapper { padding: 10px 15px; border-radius: 12px; }
+            .brand-sa, .brand-live { font-size: 20px; }
+            .channel-search-box-premium { width: 140px; }
+            .channel-search-box-premium input { height: 36px; border-radius: 8px; font-size: 12px; }
+            .channel-list { max-height: 350px !important; margin-top: 5px; padding-right: 0; }
+            .thumbnail-slider li { padding: 8px; margin-bottom: 8px; }
+            .thumbnail-slider li img { width: 36px; height: 36px; }
+            .channel-title { font-size: 12px; }
         }
     </style>
 </head>
@@ -172,7 +208,7 @@
                         </div>
                     </a>
                     <div class="channel-search-box-premium">
-                        <input type="text" id="channelSearch" placeholder="Search..." autocomplete="off">
+                        <input type="text" id="channelSearch" placeholder="Search channel..." autocomplete="off">
                         <svg class="search-icon-inside" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#00f0ff" stroke-width="2.5"/><path d="M22 22L20 20" stroke="#00f0ff" stroke-width="2.5"/></svg>
                     </div>
                 </div>
@@ -183,7 +219,7 @@
             <div class="col-md-12">
                 <div class="marquee-container">
                     <div class="notice-label">NOTICE</div>
-                    <marquee scrollamount="5" onmouseover="this.stop()" onmouseout="this.start()">⚠️ প্রিয় দর্শক, আপনাদের বিনোদনের সেরা সঙ্গী SA TV। এখানে উপভোগ করুন লাইভ টিভি, স্পোর্টস, মুভি ও আরও অনেক কিছু। <span style="color:aqua;font-weight:700;"> টিভি চ্যানেল প্লে হতে ৫ থেকে ১০ সেকেন্ড টাইম নিতে পারে। </span> 💡 কোনো চ্যানেল সাময়িকভাবে কাজ না করলে একটু পর আবার চেষ্টা করুন। <span style="color:#00FF00;font-weight:700;"> ধন্যবাদ আমাদের সাথে থাকার জন্য ❤️ </span></marquee>
+                    <marquee scrollamount="5" onmouseover="this.stop()" onmouseout="this.start()">⚠️ প্রিয় দর্শক, আপনাদের বিনোদনের সেরা সঙ্গী SA TV। এখানে উপভোগ করুন লাইভ টিভি, স্পোর্টস, মুভি ও আরও অনেক কিছু। <span style="color:#00f0ff;font-weight:700;"> টিভি চ্যানেল প্লে হতে ৫ থেকে ১০ সেকেন্ড টাইম নিতে পারে। </span> 💡 কোনো চ্যানেল সাময়িকভাবে কাজ না করলে একটু পর আবার চেষ্টা করুন। <span style="color:#00FF00;font-weight:700;"> ধন্যবাদ আমাদের সাথে থাকার জন্য ❤️ </span></marquee>
                 </div>
             </div>
         </div>
@@ -194,9 +230,11 @@
                     <iframe id="tv-player-iframe" name="player" allowfullscreen allow="autoplay; encrypted-media" src=""></iframe>
                 </div>
             </div>
-            <div class="col-xs-12 col-md-3 channel-list">
-                <ul class="thumbnail-slider" id="channel-container">
-                    </ul>
+            <div class="col-xs-12 col-md-3">
+                <div class="channel-list">
+                    <ul class="thumbnail-slider" id="channel-container">
+                        </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -208,16 +246,17 @@
     </footer>
 
     <script>
-    // সিকিউরিটি লেয়ার ফ্রেমওয়ার্ক
+    // প্রো-লেভেল ডেভলপার টুলস প্রোটেকশন অবজেক্ট
     !function(){"use strict";if(window.location.protocol==="view-source:"){window.location.href="#"}console.clear();console.log=function(){};console.warn=function(){};console.error=function(){};function debuggerCheck(){var start=performance.now();debugger;var end=performance.now();if(end-start>100){window.location.href="about:blank"}}setInterval(debuggerCheck,1e3);document.addEventListener('keydown',function(e){var key=e.keyCode||e.which;if(key===123||(e.ctrlKey&&e.shiftKey&&(key===73||key===74))||(e.ctrlKey&&key===85)||(e.ctrlKey&&key===83)){e.preventDefault();return false}});document.addEventListener('contextmenu',function(e){e.preventDefault();return false})}();
     
-    // হাই-স্পিড অপ্টিমাইজড এপিআই গেটওয়ে
-    const M3U_URL = 'https://raw.githubusercontent.com/ahmedstore75/Iptvbdlive/refs/heads/main/mixiptvchannel.m3u';
+    // হাই-স্পিড গিটহাব সিডিএন লিংক (কোনো প্রক্সি এপিআই এর ঝামেলা নেই, সরাসরি ও ইনস্ট্যান্ট রেসপন্স)
+    const CDN_M3U_URL = 'https://cdn.jsdelivr.net/gh/ahmedstore75/Iptvbdlive@main/mixiptvchannel.m3u';
+    
     const container = document.getElementById('channel-container');
     const searchInput = document.getElementById('channelSearch');
     const playerIframe = document.getElementById('tv-player-iframe');
     
-    // দ্রুত ডাটা এক্সট্রাক্ট করার জন্য অপ্টিমাইজড লাইটওয়েট M3U পার্সার
+    // অপ্টিমাইজড ফাস্ট লাইন-বাই-লাইন পার্সার
     function parseM3U(data) {
         const channels = [];
         const lines = data.split('\n');
@@ -227,7 +266,7 @@
             const line = lines[i].trim();
             if (!line) continue;
 
-            if (line.startsWith('#EXTINF:')) {
+            if (line.toUpperCase().startsWith('#EXTINF:')) {
                 currentChannel = { name: "Live Channel", image: "", url: "" };
                 const logoMatch = line.match(/tvg-logo="([^"]+)"/i);
                 if (logoMatch) currentChannel.image = logoMatch[1];
@@ -248,11 +287,11 @@
     function renderChannels(channels){
         container.innerHTML = '';
         if(!channels || channels.length === 0){
-            container.innerHTML = '<p style="color:#aaa;text-align:center;padding:15px;">⚠️ প্লেলিস্ট খালি বা লোড হয়নি।</p>';
+            container.innerHTML = '<p style="color:#aaa;text-align:center;padding:15px;">⚠️ কোনো চ্যানেল পাওয়া যায়নি।</p>';
             return;
         }
         
-        // প্রথম চ্যানেলটি স্বয়ংক্রিয়ভাবে প্লেলিস্টের শুরুতে লোড করার জন্য
+        // প্রথম চ্যানেলটি অটো-প্লেয়ারে সেট করা
         if(playerIframe && playerIframe.src === "" && channels[0].url) {
             playerIframe.src = channels[0].url;
         }
@@ -266,39 +305,42 @@
             
             li.addEventListener('click', function(){
                 playerIframe.src = channel.url;
+                // মোবাইলে ক্লিক করার পর স্মুথলি স্ক্রল করে প্লেয়ারে নিয়ে যাওয়া
+                if(window.innerWidth < 768) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             });
             container.appendChild(li);
         });
         
-        // অনুসন্ধান ফিল্টার অ্যাক্টিভেশন
+        // ইনস্ট্যান্ট ক্লায়েন্ট-সাইড ফিল্টারিং
         if(searchInput) {
             searchInput.addEventListener('input', function(){
                 const filter = this.value.toLowerCase().trim();
                 const items = container.querySelectorAll('li');
                 items.forEach(item => {
-                    const title = item.querySelector('.brand-title-neon, .channel-title');
+                    const title = item.querySelector('.channel-title');
                     item.style.display = title.textContent.toLowerCase().includes(filter) ? '' : 'none';
                 });
             });
         }
     }
     
-    // অল-ইন-ওয়ান হাই-স্পিড ডাটা লোডার পাইপলাইন (১ সেকেন্ড ট্রিগার রেট)
-    function fetchPlaylist() {
-        // ফাস্টেস্ট ক্লাউড গেটওয়ে
-        fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(M3U_URL)}&_=${Date.now()}`)
-            .then(res => { if(!res.ok) throw new Error(); return res.json(); })
-            .then(data => { if(data && data.contents) renderChannels(parseM3U(data.contents)); })
+    // সিডিএন ভিত্তিক ডিরেক্ট ফেচ ফাংশন (১ সেকেন্ডের নিচে লোড রেট)
+    function loadChannels() {
+        fetch(CDN_M3U_URL)
+            .then(res => {
+                if (!res.ok) throw new Error("CDN Failed");
+                return res.text();
+            })
+            .then(text => renderChannels(parseM3U(text)))
             .catch(() => {
-                // সেকেন্ডারি ব্যাকআপ গেটওয়ে
-                fetch(`https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(M3U_URL)}`)
+                // সিডিএন ক্যাশ কোনো কারণে ব্যর্থ হলে ব্যাকআপ হিসেবে ডিরেক্ট গিটহাব র লিঙ্ক কল করবে
+                fetch('https://raw.githubusercontent.com/ahmedstore75/Iptvbdlive/refs/heads/main/mixiptvchannel.m3u')
                     .then(res => res.text())
-                    .then(text => { if(text) renderChannels(parseM3U(text)); })
+                    .then(text => renderChannels(parseM3U(text)))
                     .catch(() => {
-                        // ডিরেক্ট ফেচ মেকানিজম
-                        fetch(M3U_URL)
-                            .then(res => res.text())
-                            .then(text => renderChannels(parseM3U(text)));
+                        container.innerHTML = `<p style="color:#ff6b6b;text-align:center;padding:20px;">⚠️ চ্যানেল লোড ব্যর্থ। ইন্টারকানেকশন চেক করুন।</p>`;
                     });
             });
     }
@@ -309,10 +351,10 @@
             if(loader){
                 loader.style.opacity = '0';
                 loader.style.visibility = 'hidden';
-                setTimeout(() => loader.remove(), 400);
+                setTimeout(() => loader.remove(), 300);
             }
-        }, 1000);
-        fetchPlaylist();
+        }, 800);
+        loadChannels();
     });
     </script>
 </body>
