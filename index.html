@@ -36,11 +36,11 @@
             margin-bottom: 15px !important;
         }
         
-        /* 📺 পোর্ট্রেট (সোজা) মোডের জন্য প্লেয়ার সাইজ */
+        /* 📺 পোর্ট্রেট (সোজা) মোডের স্ট্যান্ডার্ড সাইজ */
         .video-container-box {
             position: relative;
             width: 100%;
-            padding-top: 56.25%; /* ১৬:৯ স্ট্যান্ডার্ড সাইজ */
+            padding-top: 56.25%; /* ১৬:৯ */
             border: 2px solid rgba(0, 240, 255, 0.2);
             border-radius: 16px;
             background: #000;
@@ -48,7 +48,6 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0, 240, 255, 0.1);
         }
         
-        /* 🚀 আল্ট্রা ফুল স্ক্রিন ইঞ্জিন (কালো বর্ডার ও ক্রপ মুক্ত) */
         iframe {
             position: absolute !important;
             top: 0 !important;
@@ -57,7 +56,7 @@
             height: 100% !important;
             border: 0 !important;
             display: block;
-            object-fit: fill !important; /* স্ট্রেচ করে কালো বর্ডার সম্পূর্ণ দূর করবে */
+            object-fit: fill !important; /* স্ট্রেচ ফিট */
         }
 
         /* ইন্ট্রো লোডার */
@@ -83,7 +82,7 @@
         .loading-dots span:nth-child(2) { animation-delay: -.16s; }
         @keyframes dotPulse { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
-        /* কালারফুল হেডার */
+        /* হেডার */
         .top-bar-wrapper {
             display: flex;
             align-items: center;
@@ -204,7 +203,7 @@
         .channel-info-box { min-width: 0; flex: 1; }
         .channel-title { color: #f1f5f9; font-size: 13px; font-weight: 600; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* মোবাইল স্ক্রিন সাইজ (Portrait - সোজা অবস্থা) */
+        /* রেসপন্সিভ মিডিয়া কোয়েরি (Portrait) */
         @media(max-width: 767px) {
             .top-bar-wrapper { padding: 12px 15px; border-radius: 12px; }
             .brand-sa, .brand-live { font-size: 24px; }
@@ -216,59 +215,53 @@
             .channel-title { font-size: 12px; }
         }
 
-        /* 🚨 মোবাইল ল্যান্ডস্কেপ (Rotate) মোড - ১০০% ফুল স্ক্রিন নো বর্ডার সিস্টেম */
-        @media (max-width: 950px) and (orientation: landscape) {
-            html, body { 
-                width: 100% !important;
-                height: 100% !important;
-                padding: 0 !important; 
-                margin: 0 !important; 
-                overflow: hidden !important; 
-                background: #000 !important; 
-            }
-            .tv-area { 
-                margin: 0 !important; 
-                padding: 0 !important; 
-                width: 100vw !important; 
-                height: 100vh !important; 
-                max-width: 100% !important; 
-            }
-            .row { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; }
-            
-            /* ল্যান্ডস্কেপে হেডার, নোটিশ ও চ্যানেল লিস্ট হাইড */
-            .top-bar-wrapper, .marquee-container, .channel-list { display: none !important; }
-            
-            /* প্লেয়ারকে পুরো মোবাইল ডিসপ্লের উইডথ ও হাইটে লক করা হলো */
-            .tv-view { 
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                z-index: 999999 !important;
-            }
-            .video-container-box { 
-                border: none !important; 
-                border-radius: 0 !important; 
-                width: 100vw !important;
-                height: 100vh !important; 
-                padding-top: 0 !important; 
-            }
-            iframe {
-                width: 100vw !important;
-                height: 100vh !important;
-                object-fit: fill !important; /* স্ক্রিনের দুই পাশের কালো বর্ডার দূর করার চূড়ান্ত কমান্ড */
-            }
+        /* 🚨 জাভাস্ক্রিপ্ট ইঞ্জিন ট্রিপ করার জন্য ল্যান্ডস্কেপ মাস্টার সিএসএস ক্লাস */
+        body.landscape-mode {
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+            background: #000 !important;
+        }
+        body.landscape-mode .top-bar-wrapper, 
+        body.landscape-mode .marquee-container, 
+        body.landscape-mode .channel-list { 
+            display: none !important; 
+        }
+        body.landscape-mode .tv-area,
+        body.landscape-mode .row,
+        body.landscape-mode .tv-view {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: 100% !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            z-index: 999999 !important;
+        }
+        body.landscape-mode .video-container-box {
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            padding-top: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+        body.landscape-mode iframe {
+            width: 100vw !important;
+            height: 100vh !important;
+            object-fit: fill !important; /* কোনো কালো দাগ থাকবে না */
         }
     </style>
 </head>
 <body>
 
+    <!-- লোডার স্ক্রিন -->
     <div id="intro-loader"><div class="loader-content"><div class="welcome-text">Welcome To</div><h1 class="brand-text">SA <span>TV</span></h1><div class="loading-dots"><span></span><span></span><span></span></div></div></div>
     
-    <div class="container-fluid tv-area">
+    <div class="container-fluid tv-area" id="mainTvArea">
+        <!-- ১. হেডার এরিয়া -->
         <div class="row">
             <div class="col-md-12">
                 <div class="top-bar-wrapper">
@@ -285,6 +278,7 @@
             </div>
         </div>
 
+        <!-- ২. নোটিশ বার -->
         <div class="row">
             <div class="col-md-12">
                 <div class="marquee-container">
@@ -294,16 +288,18 @@
             </div>
         </div>
 
+        <!-- ৩. প্লেয়ার এবং চ্যানেল লিস্ট এরিয়া -->
         <div class="row">
-            <div class="col-xs-12 col-md-9 tv-view">
-                <div class="video-container-box">
+            <div class="col-xs-12 col-md-9 tv-view" id="playerViewContainer">
+                <div class="video-container-box" id="playerBox">
                     <iframe id="tv-player-iframe" name="player" allowfullscreen allow="autoplay; encrypted-media" src=""></iframe>
                 </div>
             </div>
             <div class="col-xs-12 col-md-3">
                 <div class="channel-list">
                     <ul class="thumbnail-slider" id="channel-container">
-                        </ul>
+                        <!-- চ্যানেল তালিকা -->
+                    </ul>
                 </div>
             </div>
         </div>
@@ -313,6 +309,39 @@
     // সিকিউরিটি লেয়ার
     !function(){"use strict";if(window.location.protocol==="view-source:"){window.location.href="#"}console.clear();console.log=function(){};console.warn=function(){};console.error=function(){};function debuggerCheck(){var start=performance.now();debugger;var end=performance.now();if(end-start>100){window.location.href="about:blank"}}setInterval(debuggerCheck,1e3);document.addEventListener('keydown',function(e){var key=e.keyCode||e.which;if(key===123||(e.ctrlKey&&e.shiftKey&&(key===73||key===74))||(e.ctrlKey&&key===85)||(e.ctrlKey&&key===83)){e.preventDefault();return false}});document.addEventListener('contextmenu',function(e){e.preventDefault();return false})}();
     
+    // ⚙️ আল্ট্রা রিয়েল-টাইম স্ক্রিন ফিটিং ইঞ্জিন (জাভাস্ক্রিপ্ট)
+    function fitVideoToScreen() {
+        const isLandscape = window.innerWidth > window.innerHeight && window.innerWidth < 950;
+        const body = document.body;
+        const iframe = document.getElementById('tv-player-iframe');
+        const playerBox = document.getElementById('playerBox');
+
+        if (isLandscape) {
+            body.classList.add('landscape-mode');
+            if(playerBox && iframe) {
+                // ব্রাউজারের নিখুঁত ইনার উইডথ এবং হাইট জোর করে বসানো হচ্ছে
+                playerBox.style.width = window.innerWidth + 'px';
+                playerBox.style.height = window.innerHeight + 'px';
+                iframe.style.width = window.innerWidth + 'px';
+                iframe.style.height = window.innerHeight + 'px';
+            }
+        } else {
+            body.classList.remove('landscape-mode');
+            if(playerBox && iframe) {
+                playerBox.style.width = '';
+                playerBox.style.height = '';
+                iframe.style.width = '';
+                iframe.style.height = '';
+            }
+        }
+    }
+
+    // স্ক্রিন সাইজ পরিবর্তন বা রোটেট হলে ইঞ্জিন রান করবে
+    window.addEventListener('resize', fitVideoToScreen);
+    window.addEventListener('orientationchange', () => {
+        setTimeout(fitVideoToScreen, 200); // রোটেট অ্যানিমেশন শেষ হওয়া পর্যন্ত সামান্য ডিলে
+    });
+
     // গিটহাব র লিঙ্ক
     const RAW_M3U_URL = 'https://raw.githubusercontent.com/ahmedstore75/Iptvbdlive/main/mixiptvchannel.m3u';
     
@@ -397,6 +426,7 @@
     
     function loadChannels() {
         setTimeout(hideLoader, 1000);
+        fitVideoToScreen(); // প্রাথমিক অবস্থায় স্ক্রিন চেক
 
         fetch(`${RAW_M3U_URL}?_=${Date.now()}`)
             .then(res => {
