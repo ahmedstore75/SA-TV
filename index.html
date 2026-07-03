@@ -3,276 +3,119 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <title>SA TV - Premium Player</title>
-    <link rel="shortcut icon" type="x-icon" href="https://i.postimg.cc/mD1VCt2C/RS-Live.png">
+    <title>SA TV - Premium</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
     <style>
-        :root {
-            --primary-glow: #00f0ff;
-            --secondary-glow: #ff0055;
-            --bg-dark: #06060c;
-            --card-bg: rgba(18, 18, 29, 0.6);
-        }
+        :root { --primary-glow: #00f0ff; --bg-dark: #06060c; --card-bg: rgba(18, 18, 29, 0.6); }
+        body { background-color: var(--bg-dark); color: #fff; font-family: sans-serif; margin: 0; padding: 0; }
         
-        html, body {
-            width: 100%; height: 100%; margin: 0; padding: 0;
-            background-color: var(--bg-dark); color: #fff;
-            font-family: 'Segoe UI', Roboto, sans-serif; overflow-x: hidden;
+        /* 🚀 সুসংহত হেডার এরিয়া */
+        .main-header {
+            background: rgba(10, 10, 18, 0.95);
+            padding: 8px 15px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            display: flex; flex-direction: column; gap: 5px;
         }
-        body { -webkit-user-select: none; user-select: none; padding-bottom: 20px; }
-        .tv-area { margin-top: 10px !important; padding: 0 15px; }
+        .top-row { display: flex; align-items: center; justify-content: space-between; }
+        .brand-logo { font-size: 20px; font-weight: 900; }
+        .brand-sa { color: #ff0055; } .brand-live { color: #00f0ff; }
+        .search-box { width: 140px; height: 32px; border-radius: 8px; border: 1px solid #333; background: #000; color: #fff; padding-left: 10px; font-size: 12px; }
+
+        /* 📜 নোটিশ বার (হেডারের ভেতরে চিকন) */
+        .notice-bar { font-size: 11px; color: #ccc; border-top: 1px solid #222; padding-top: 5px; }
         
-        /* পোর্ট্রেট মোড প্লেয়ার */
-        .video-container-box {
-            position: relative; width: 100%; padding-top: 56.25%;
-            border: 2px solid rgba(0, 240, 255, 0.2); border-radius: 16px;
-            background: #000; overflow: hidden;
-        }
-        #player {
-            position: absolute !important; top: 0; left: 0; width: 100% !important; height: 100% !important;
-        }
+        /* প্লেয়ার বক্স */
+        .video-container-box { position: relative; width: 100%; padding-top: 56.25%; background: #000; }
+        #player { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
 
-        /* 🔊 কাস্টম আনমিউট বাটন ওভারলে */
-        #unmute-overlay {
-            position: absolute; inset: 0; background: rgba(0,0,0,0.4);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 999; cursor: pointer; transition: opacity 0.3s ease;
-        }
-        .unmute-btn {
-            background: linear-gradient(135deg, var(--secondary-glow), #ff5500);
-            color: #fff; padding: 12px 24px; border-radius: 30px;
-            font-weight: bold; font-size: 14px; letter-spacing: 0.5px;
-            box-shadow: 0 5px 20px rgba(255, 0, 85, 0.5);
-            display: flex; align-items: center; gap: 8px;
-            animation: pulseBtn 1.5s infinite;
-        }
-        @keyframes pulseBtn {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); box-shadow: 0 5px 25px rgba(255, 0, 85, 0.8); }
-            100% { transform: scale(1); }
-        }
+        /* ক্যাটাগরি ও লিস্ট */
+        .category-container { display: flex; gap: 5px; overflow-x: auto; padding: 10px; }
+        .category-btn { background: #1a1a2e; color: #fff; border: 1px solid #333; padding: 5px 12px; border-radius: 15px; font-size: 11px; white-space: nowrap; }
+        .category-btn.active { background: var(--primary-glow); color: #000; font-weight: bold; }
+        .channel-list { padding: 0 10px; }
+        .thumbnail { display: flex; align-items: center; gap: 10px; background: #111; padding: 8px; border-radius: 8px; margin-bottom: 8px; cursor: pointer; }
+        .thumbnail img { width: 35px; height: 35px; border-radius: 5px; }
 
-        /* হেডার ও সার্চ */
-        .top-bar-wrapper { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; border-radius: 16px; background: rgba(10, 10, 18, 0.9); border: 1px solid rgba(0, 240, 255, 0.25); margin-bottom: 15px; gap: 10px; }
-        .brand-sa { font-size: 30px; font-weight: 900; background: linear-gradient(45deg, #ff0055, #ff5500); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .brand-live { font-size: 30px; font-weight: 900; background: linear-gradient(45deg, #00f0ff, #0072ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .channel-search-box-premium input { width: 180px; height: 42px; border-radius: 12px; background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.1); padding-left: 15px; outline: none; }
-        
-        /* 📜 নোটিশ বার */
-        .marquee-container {
-            background: rgba(13, 13, 19, 0.8);
-            border: 1px solid rgba(0, 240, 255, 0.15);
-            border-left: 4px solid var(--secondary-glow);
-            color: #fff; padding: 12px 0; display: flex;
-            align-items: center; border-radius: 10px; margin-bottom: 18px;
-            width: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .notice-label {
-            background: linear-gradient(135deg, var(--secondary-glow), #ff5500);
-            color: #fff; padding: 4px 14px; margin-left: 15px; border-radius: 6px;
-            font-weight: 800; font-size: 11px; letter-spacing: 0.5px;
-            box-shadow: 0 3px 10px rgba(255, 0, 85, 0.3);
-        }
-        .marquee-container marquee { flex: 1; padding: 0 15px; font-size: 13px; color: #e2e8f0; font-weight: 500; }
-
-        /* ক্যাটাগরি সেকশন */
-        .category-container {
-            display: flex; gap: 8px; overflow-x: auto; padding: 5px 0 12px; margin-bottom: 10px;
-            scrollbar-width: none; -ms-overflow-style: none;
-        }
-        .category-container::-webkit-scrollbar { display: none; }
-        .category-btn {
-            background: rgba(255, 255, 255, 0.05); color: #ccc; border: 1px solid rgba(255,255,255,0.1);
-            padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600;
-            white-space: nowrap; transition: all 0.2s ease;
-        }
-        .category-btn.active, .category-btn:hover {
-            background: var(--primary-glow); color: #000; font-weight: 700; border-color: var(--primary-glow);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
-        }
-
-        /* চ্যানেল লিস্ট */
-        .channel-list { max-height: 450px; overflow-y: auto; padding-right: 5px; }
-        .channel-list::-webkit-scrollbar { width: 4px; }
-        .channel-list::-webkit-scrollbar-thumb { background: var(--primary-glow); border-radius: 4px; }
-        .thumbnail-slider { list-style: none; padding: 0; margin: 0; }
-        .thumbnail-slider li { background: var(--card-bg); border-radius: 12px; padding: 10px; margin-bottom: 10px; cursor: pointer; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.05); transition: all 0.2s; }
-        .thumbnail-slider li:hover { border-color: var(--primary-glow); background: rgba(22, 23, 38, 0.9); }
-        .thumbnail-slider li img { width: 42px; height: 42px; border-radius: 8px; object-fit: cover; background: #000; }
-        .channel-title { font-size: 13px; font-weight: 600; margin: 0; }
-
-        /* ল্যান্ডস্কেপ মোড - ফুল স্ক্রিন ইঞ্জিন */
-        body.fullscreen-mode { padding: 0 !important; margin: 0 !important; overflow: hidden !important; }
-        body.fullscreen-mode .top-bar-wrapper, body.fullscreen-mode .marquee-container, body.fullscreen-mode .category-container, body.fullscreen-mode .channel-list { display: none !important; }
-        body.fullscreen-mode .tv-area, body.fullscreen-mode .row, body.fullscreen-mode .col-md-9 { margin: 0 !important; padding: 0 !important; width: 100vw !important; height: 100vh !important; position: fixed !important; top: 0; left: 0; z-index: 99999; }
-        body.fullscreen-mode .video-container-box { border: none !important; border-radius: 0 !important; width: 100vw !important; height: 100vh !important; padding-top: 0 !important; }
-        body.fullscreen-mode #player, body.fullscreen-mode video { width: 100vw !important; height: 100vh !important; object-fit: fill !important; }
+        /* ফুল স্ক্রিন মোড */
+        body.fullscreen-mode .main-header, body.fullscreen-mode .category-container, body.fullscreen-mode .channel-list { display: none !important; }
+        body.fullscreen-mode .video-container-box { position: fixed; inset: 0; padding-top: 0; z-index: 9999; }
+        body.fullscreen-mode video { object-fit: fill !important; }
     </style>
 </head>
 <body>
 
-    <div class="container-fluid tv-area">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="top-bar-wrapper">
-                    <div><span class="brand-sa">SA</span><span class="brand-live">TV</span></div>
-                    <div class="channel-search-box-premium"><input type="text" id="channelSearch" placeholder="Search channel..."></div>
-                </div>
-            </div>
+    <!-- একক হেডার এরিয়া (লোগো, সার্চ ও নোটিশ সব একসাথে) -->
+    <div class="main-header">
+        <div class="top-row">
+            <div class="brand-logo"><span class="brand-sa">SA</span><span class="brand-live">TV</span></div>
+            <input type="text" class="search-box" id="channelSearch" placeholder="Search...">
         </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <div class="marquee-container">
-                    <div class="notice-label">NOTICE</div>
-                    <marquee scrollamount="5" onmouseover="this.stop()" onmouseout="this.start()">⚠️ প্রিয় দর্শক, আপনাদের বিনোদনের সেরা সঙ্গী SA TV। এখানে উপভোগ করুন লাইভ টিভি, স্পোর্টস, মুভি ও আরও অনেক কিছু। <span style="color:#00f0ff;font-weight:700;"> টিভি চ্যানেল প্লে হতে ৫ থেকে ১০ সেকেন্ড টাইম নিতে পারে। </span> 💡 কোনো চ্যানেল সাময়িকভাবে কাজ না করলে একটু পর আবার চেষ্টা করুন। <span style="color:#00FF00;font-weight:700;"> ধন্যবাদ আমাদের সাথে থাকার জন্য ❤️ </span></marquee>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-xs-12 col-md-9">
-                <div class="video-container-box">
-                    <div id="player"></div>
-                    <div id="unmute-overlay" onclick="handleUnmute()">
-                        <div class="unmute-btn">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM12 4L9.91 6.09 12 8.18V4zm-7.7 1.49L3 6.79 7.21 11H3v2h4l5 5v-6.18l4.18 4.18c-.5.33-1.05.59-1.68.72v2.03c1.17-.23 2.25-.79 3.14-1.57l2.55 2.55 1.29-1.29L4.3 5.49z"/></svg>
-                            টাচ করে সাউন্ড অন করুন
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-xs-12 col-md-3">
-                <div class="category-container" id="category-bar">
-                    <button class="category-btn active" onclick="filterCategory('ALL')">ALL</button>
-                </div>
-                <div class="channel-list">
-                    <ul class="thumbnail-slider" id="channel-container"></ul>
-                </div>
-            </div>
+        <div class="notice-bar">
+            <marquee>⚠️ স্বাগতম SA TV তে। কোনো চ্যানেল না চললে একটু অপেক্ষা করুন অথবা অন্য ক্যাটাগরিতে চেক করুন।</marquee>
         </div>
     </div>
 
+    <div class="video-container-box">
+        <div id="player"></div>
+    </div>
+
+    <div class="category-container" id="category-bar">
+        <button class="category-btn active" onclick="filterCategory('ALL')">ALL</button>
+    </div>
+
+    <div class="channel-list" id="channel-container"></div>
+
     <script>
-    let mainPlayer = null;
-    let allChannels = [];
-    const RAW_M3U_URL = 'https://raw.githubusercontent.com/ahmedstore75/Iptvbdlive/main/mixiptvchannel.m3u';
+        let mainPlayer = null;
+        let allChannels = [];
+        const RAW_M3U_URL = 'https://raw.githubusercontent.com/ahmedstore75/Iptvbdlive/main/mixiptvchannel.m3u';
 
-    function initPlayer(videoUrl, startMuted = true) {
-        if (mainPlayer) { mainPlayer.destroy(); }
-        
-        mainPlayer = new Clappr.Player({
-            source: videoUrl,
-            parentId: "#player",
-            width: '100%',
-            height: '100%',
-            autoPlay: true,  
-            mute: startMuted, 
-            allowfullscreen: true,
-            playback: { playInline: true, recycleVideo: true }
-        });
-
-        const overlay = document.getElementById('unmute-overlay');
-        if(!startMuted && overlay) { overlay.style.display = 'none'; }
-        else if (overlay) { overlay.style.display = 'flex'; }
-
-        setTimeout(() => {
-            const videoElement = document.querySelector('#player video');
-            if (videoElement) {
-                videoElement.style.setProperty('object-fit', 'fill', 'important');
-                videoElement.play().catch(() => {});
-            }
-        }, 600);
-    }
-
-    function handleUnmute() {
-        const videoElement = document.querySelector('#player video');
-        if (videoElement) {
-            videoElement.muted = false;
-            mainPlayer.setVolume(100);
+        function initPlayer(url, mute = true) {
+            if(mainPlayer) mainPlayer.destroy();
+            mainPlayer = new Clappr.Player({source: url, parentId: "#player", width: '100%', height: '100%', autoPlay: true, mute: mute});
+            setTimeout(() => document.querySelector('video').style.setProperty('object-fit', 'fill', 'important'), 500);
         }
-        document.getElementById('unmute-overlay').style.display = 'none';
-    }
 
-    function checkOrientation() {
-        if (window.innerWidth > window.innerHeight && window.innerWidth < 1024) {
-            document.body.classList.add('fullscreen-mode');
-        } else {
-            document.body.classList.remove('fullscreen-mode');
-        }
-    }
-    window.addEventListener('resize', checkOrientation);
-    window.addEventListener('DOMContentLoaded', checkOrientation);
-
-    fetch(RAW_M3U_URL)
-        .then(res => res.text())
-        .then(data => {
+        fetch(RAW_M3U_URL).then(res => res.text()).then(data => {
             const lines = data.split('\n');
-            let current = null;
-            let categories = new Set();
-            
-            for (let i = 0; i < lines.length; i++) {
-                let line = lines[i].trim();
-                if (line.toUpperCase().startsWith('#EXTINF:')) {
-                    current = { name: "Live Channel", image: "", url: "", category: "OTHERS" };
-                    let logo = line.match(/tvg-logo="([^"]+)"/i);
-                    if (logo) current.image = logo[1];
-                    let group = line.match(/group-title="([^"]+)"/i);
-                    if (group) {
-                        current.category = group[1].toUpperCase();
-                        categories.add(group[1].toUpperCase());
-                    }
-                    let idx = line.lastIndexOf(',');
-                    if (idx !== -1) current.name = line.substring(idx + 1).trim();
-                } else if (line.startsWith('http')) {
-                    if (current) { current.url = line; allChannels.push(current); current = null; }
+            let catSet = new Set();
+            lines.forEach((line, i) => {
+                if(line.startsWith('#EXTINF:')) {
+                    let name = line.split(',')[1];
+                    let cat = (line.match(/group-title="([^"]+)"/) || [])[1] || 'OTHERS';
+                    catSet.add(cat.toUpperCase());
+                    allChannels.push({name, cat: cat.toUpperCase(), url: lines[i+1]});
                 }
-            }
-
-            const categoryBar = document.getElementById('category-bar');
-            categories.forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = 'category-btn';
-                btn.textContent = cat;
-                btn.onclick = () => filterCategory(cat, btn);
-                categoryBar.appendChild(btn);
             });
-
-            if (allChannels.length > 0) {
-                initPlayer(allChannels[0].url, true); 
-                renderChannels(allChannels);
-            }
+            
+            // ক্যাটাগরি বাটন
+            catSet.forEach(c => {
+                document.getElementById('category-bar').innerHTML += `<button class="category-btn" onclick="filterCategory('${c}')">${c}</button>`;
+            });
+            render(allChannels);
+            initPlayer(allChannels[0].url);
         });
 
-    function renderChannels(channels) {
-        const container = document.getElementById('channel-container');
-        container.innerHTML = '';
-        channels.forEach(ch => {
-            const li = document.createElement('li');
-            li.innerHTML = `<img src="${ch.image || 'https://i.postimg.cc/mD1VCt2C/RS-Live.png'}" onerror="this.src='https://i.postimg.cc/mD1VCt2C/RS-Live.png'"><p class="channel-title">${ch.name}</p>`;
-            li.addEventListener('click', () => {
-                initPlayer(ch.url, false); 
-                if(window.innerWidth < 768) window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-            container.appendChild(li);
-        });
-    }
+        function render(arr) {
+            document.getElementById('channel-container').innerHTML = arr.map(ch => 
+                `<div class="thumbnail" onclick="initPlayer('${ch.url}', false)">
+                    <span>${ch.name}</span>
+                </div>`).join('');
+        }
 
-    function filterCategory(category, element) {
-        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
-        if (element) element.classList.add('active');
-        else document.querySelector('.category-btn').classList.add('active');
+        function filterCategory(cat) {
+            render(cat === 'ALL' ? allChannels : allChannels.filter(c => c.cat === cat));
+        }
 
-        if (category === 'ALL') renderChannels(allChannels);
-        else renderChannels(allChannels.filter(ch => ch.category === category));
-    }
+        document.getElementById('channelSearch').oninput = (e) => {
+            render(allChannels.filter(c => c.name.toLowerCase().includes(e.target.value.toLowerCase())));
+        };
 
-    document.getElementById('channelSearch').addEventListener('input', function() {
-        const query = this.value.toLowerCase().trim();
-        renderChannels(allChannels.filter(ch => ch.name.toLowerCase().includes(query)));
-    });
+        window.onresize = () => {
+            if(window.innerWidth > window.innerHeight) document.body.classList.add('fullscreen-mode');
+            else document.body.classList.remove('fullscreen-mode');
+        }
     </script>
 </body>
 </html>
