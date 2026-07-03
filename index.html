@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>SA TV</title>
     <link rel="shortcut icon" type="x-icon" href="https://i.postimg.cc/mD1VCt2C/RS-Live.png">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -25,6 +25,7 @@
             color: #fff;
             font-family: 'Segoe UI', Roboto, sans-serif;
             padding-bottom: 20px;
+            margin: 0;
         }
         
         .tv-area {
@@ -35,7 +36,7 @@
             margin-bottom: 15px !important;
         }
         
-        /* ফুল স্ক্রিন ও ক্রপ প্রটেকশন */
+        /* স্ট্যান্ডার্ড ভিউ কন্টেইনার */
         .tv-view .embed-responsive {
             border: 2px solid rgba(0, 240, 255, 0.2);
             border-radius: 16px;
@@ -43,12 +44,14 @@
             overflow: hidden;
             box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(0, 240, 255, 0.1);
         }
+        
+        /* ভিডিও পারফেক্ট ফুল স্ক্রিন ও ক্রপ প্রটেকশন মেকানিজম */
         iframe {
             border: 0 !important;
             display: block;
             width: 100% !important;
             height: 100% !important;
-            object-fit: contain !important;
+            object-fit: fill !important; /* ভিডিও না কেটে সম্পূর্ণ স্ক্রিন জুড়ে ফিল করবে */
         }
 
         /* ইন্ট্রো লোডার */
@@ -195,7 +198,7 @@
         .channel-info-box { min-width: 0; flex: 1; }
         .channel-title { color: #f1f5f9; font-size: 13px; font-weight: 600; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* মোবাইল স্ক্রিন ও ল্যান্ডস্কেপ মোড */
+        /* মোবাইল স্ক্রিন সাইজ (Portrait - সোজা অবস্থা) */
         @media(max-width: 767px) {
             .top-bar-wrapper { padding: 12px 15px; border-radius: 12px; }
             .brand-sa, .brand-live { font-size: 24px; }
@@ -207,11 +210,33 @@
             .channel-title { font-size: 12px; }
         }
 
-        @media (max-height: 450px) and (orientation: landscape) {
-            .top-bar-wrapper, .marquee-container { display: none !important; }
-            .tv-view { margin-bottom: 0 !important; padding: 0 !important; width: 100% !important; }
-            .channel-list { display: none !important; }
-            .tv-view .embed-responsive { border: none; border-radius: 0; height: 100vh !important; }
+        /* 🚨 মোবাইল ল্যান্ডস্কেপ (Rotate/ফোন কাত করা অবস্থা) আল্ট্রা ফুল স্ক্রিন ইঞ্জিন */
+        @media (max-width: 950px) and (orientation: landscape) {
+            body { padding: 0 !important; margin: 0 !important; overflow: hidden !important; background: #000 !important; }
+            .tv-area { margin: 0 !important; padding: 0 !important; width: 100vw !important; height: 100vh !important; max-width: 100% !important; }
+            .row { margin: 0 !important; padding: 0 !important; }
+            
+            /* ফোন কাত করলে হেডার, সার্চবার এবং নোটিশবার হাইড হয়ে ভিডিওর জন্য জায়গা খালি করবে */
+            .top-bar-wrapper, .marquee-container, .channel-list { display: none !important; }
+            
+            /* প্লেয়ার এরিয়াকে পুরো মোবাইল ডিসপ্লে সাইজ দেওয়া হলো */
+            .tv-view { 
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                z-index: 999999 !important;
+            }
+            .tv-view .embed-responsive { 
+                border: none !important; 
+                border-radius: 0 !important; 
+                width: 100% !important;
+                height: 100% !important; 
+                padding-bottom: 0 !important; /* বুটস্ট্র্যাপের ১৬:৯ প্যাডিং রিমুভ */
+            }
         }
     </style>
 </head>
@@ -247,7 +272,7 @@
 
         <div class="row">
             <div class="col-xs-12 col-md-9 tv-view">
-                <div class="embed-responsive embed-responsive-16by9">
+                <div class="embed-responsive">
                     <iframe id="tv-player-iframe" name="player" allowfullscreen allow="autoplay; encrypted-media" src=""></iframe>
                 </div>
             </div>
@@ -264,7 +289,7 @@
     // সিকিউরিটি লেয়ার
     !function(){"use strict";if(window.location.protocol==="view-source:"){window.location.href="#"}console.clear();console.log=function(){};console.warn=function(){};console.error=function(){};function debuggerCheck(){var start=performance.now();debugger;var end=performance.now();if(end-start>100){window.location.href="about:blank"}}setInterval(debuggerCheck,1e3);document.addEventListener('keydown',function(e){var key=e.keyCode||e.which;if(key===123||(e.ctrlKey&&e.shiftKey&&(key===73||key===74))||(e.ctrlKey&&key===85)||(e.ctrlKey&&key===83)){e.preventDefault();return false}});document.addEventListener('contextmenu',function(e){e.preventDefault();return false})}();
     
-    // আপনার গিটহাবের র (Raw) লিঙ্ক সরাসরি
+    // গিটহাব র (Raw) লিঙ্ক
     const RAW_M3U_URL = 'https://raw.githubusercontent.com/ahmedstore75/Iptvbdlive/main/mixiptvchannel.m3u';
     
     const container = document.getElementById('channel-container');
@@ -347,10 +372,9 @@
     }
     
     function loadChannels() {
-        // ১. সেফটি মেকানিজম: গিটহাবের নেটওয়ার্ক রেসপন্স যাই হোক না কেন, ১ সেকেন্ডের মাথায় লোডার স্ক্রিন বন্ধ হয়ে মেইন ইন্টারফেস চলে আসবে
+        // ফাস্ট ফোর্স এক্সিট ১ সেকেন্ড পর
         setTimeout(hideLoader, 1000);
 
-        // ২. সরাসরি গিটহাব র ফাইল ফেচ করার চেষ্টা (উইথ ক্যাশ বাইপাস)
         fetch(`${RAW_M3U_URL}?_=${Date.now()}`)
             .then(res => {
                 if(!res.ok) throw new Error();
@@ -360,14 +384,13 @@
                 if(text) renderChannels(parseM3U(text));
             })
             .catch(() => {
-                // সিডিএন ব্যাকআপ (CORS এরর এড়ানোর জন্য অল্টারনেটিভ ব্যাকআপ)
                 fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(RAW_M3U_URL)}`)
                     .then(res => res.json())
                     .then(data => {
                         if(data && data.contents) renderChannels(parseM3U(data.contents));
                     })
                     .catch(() => {
-                        container.innerHTML = `<p style="color:#aaa;text-align:center;padding:15px;">⚠️ চ্যানেল লোড হতে সমস্যা হচ্ছে। প্লেলিস্ট লিঙ্কটি চেক করুন।</p>`;
+                        container.innerHTML = `<p style="color:#aaa;text-align:center;padding:15px;">⚠️ চ্যানেল লোড হতে সমস্যা হচ্ছে।</p>`;
                     });
             });
     }
