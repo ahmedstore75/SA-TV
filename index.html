@@ -41,11 +41,24 @@
         .brand-sa { color: var(--secondary-glow); }
         .brand-live { color: var(--primary-glow); }
         
+        /* 🔍 আপগ্রেডেড সার্চ বক্স স্টাইল */
         .search-box {
-            width: 140px; height: 32px; border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.6); color: #fff;
-            padding-left: 12px; font-size: 12px; outline: none;
+            width: 150px; height: 34px; border-radius: 20px;
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            background: rgba(255, 255, 255, 0.06); color: #fff;
+            padding: 0 15px; font-size: 12px; outline: none;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        /* সার্চ বক্সে ক্লিক করলে যে নিয়ন কালার গ্লো করবে */
+        .search-box:focus { 
+            border-color: var(--primary-glow); 
+            background: rgba(0, 240, 255, 0.05);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+            width: 170px; /* ক্লিক করলে হালকা একটু বড় হবে দেখতে সুন্দর লাগে */
+        }
+        .search-box::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
 
         /* 📜 নোটিশ বার */
@@ -157,6 +170,7 @@
     <div class="fixed-top-section">
         <div class="main-header">
             <div class="brand-logo"><span class="brand-sa">SA</span><span class="brand-live">TV</span></div>
+            <!-- আপডেটেড সার্চ বক্স -->
             <input type="text" class="search-box" id="channelSearch" placeholder="Search channel...">
         </div>
         <div class="notice-bar">
