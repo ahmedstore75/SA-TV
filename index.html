@@ -121,7 +121,7 @@
         .thumbnail-card img { width: 38px; height: 38px; border-radius: 6px; object-fit: cover; background: #111; }
         .channel-name { font-size: 13px; font-weight: 600; margin: 0; color: #fff; }
 
-        /* 🔴 একটিভ চ্যানেল স্টাইল (ক্লিক করার পর এই চিহ্নটি দেখাবে) */
+        /* 🔴 একটিভ চ্যানেল ক্লিক চিহ্ন */
         .thumbnail-card.active-play {
             background: rgba(0, 240, 255, 0.12);
             border: 1px solid var(--primary-glow);
@@ -187,7 +187,7 @@
     <script>
         let mainPlayer = null;
         let allChannels = [];
-        let currentUrl = ""; // বর্তমানে কোন URL চলছে তা ট্র্যাকিং করার জন্য
+        let currentUrl = ""; 
         const RAW_M3U_URL = 'https://raw.githubusercontent.com/ahmedstore75/Iptvbdlive/main/mixiptvchannel.m3u';
 
         function initPlayer(url, startMuted = true) {
@@ -217,7 +217,6 @@
                 }
             }, 600);
 
-            // চ্যানেল সিলেক্ট করার পর লিস্ট আপডেট করে অ্যাক্টিভ ক্লাস বসানো
             updateActiveChannelUI();
         }
 
@@ -290,11 +289,9 @@
                 </div>
             `).join('');
             
-            // রেন্ডার হওয়ার পর কারেন্ট প্লেয়িং চ্যানেলটির ইউজার ইন্টারফেস হাইলাইট করা
             updateActiveChannelUI();
         }
 
-        // 🎯 কোন চ্যানেলটি ক্লিক করা হয়েছে তা চিহ্নিত করার মেইন ফাংশন
         function updateActiveChannelUI() {
             document.querySelectorAll('.thumbnail-card').forEach(card => {
                 if(card.getAttribute('data-url') === currentUrl) {
