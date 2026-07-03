@@ -34,19 +34,24 @@
         </div>
     </footer>
     <script>
-    // সিকিউরিটি ও ডেভেলপার টুলস প্রটেকশন
+    // সিকিউরিটি প্রটেকশন
     !function(){"use strict";if(window.location.protocol==="view-source:"){window.location.href="#" }console.clear();console.log=function(){};console.warn=function(){};console.error=function(){};console.info=function(){};function debuggerCheck(){var start=performance.now();debugger;var end=performance.now();if(end-start>100){window.location.href="about:blank"}}setInterval(debuggerCheck,1e3);document.addEventListener('keydown',function(e){var key=e.keyCode||e.which;if(key===123||(e.ctrlKey&&e.shiftKey&&(key===73||key===74))||(e.ctrlKey&&key===85)||(e.ctrlKey&&key===83)||(e.ctrlKey&&key===80)||(e.ctrlKey&&key===67)||(e.ctrlKey&&key===86)||(e.ctrlKey&&key===88)||key===44){e.preventDefault();e.stopPropagation();return false}});document.addEventListener('contextmenu',function(e){e.preventDefault();return false});document.addEventListener('copy',function(e){e.preventDefault();return false});document.addEventListener('cut',function(e){e.preventDefault();return false});document.addEventListener('paste',function(e){e.preventDefault();return false});document.addEventListener('dragstart',function(e){e.preventDefault();return false});document.addEventListener('selectstart',function(e){e.preventDefault();return false})}();
     
-    // আপনার M3U প্লেলিস্ট লিংক
-    const M3U_URL = 'https://raw.githubusercontent.com/ahmedstore75/Iptvbdlive/refs/heads/main/mixiptvchannel.m3u';
-    
-    // ক্যাশিং ও CORS এড়াতে শক্তিশালী AllOrigins JSON Proxy ব্যবহার
-    const PROXY_URL = 'https://api.allorigins.win/get?url=' + encodeURIComponent(M3U_URL) + '&busting=' + Date.now();
-    
+    // আপনার M3U ডেটা সরাসরি লোকাল ভেরিয়েবলে স্টোর করা হলো (কোনো ডাউনলোডের ঝামেলা নেই)
+    const LOCAL_M3U_DATA = `#EXTM3U
+#EXTINF:-1 tvg-logo="https://i.postimg.cc/mD1VCt2C/RS-Live.png",T SPORTS LIVE
+https://bongobd-tick-live.akamaized.net/hls/live/2042784/tsports/index.m3u8
+#EXTINF:-1 tvg-logo="https://i.postimg.cc/mD1VCt2C/RS-Live.png",GAZI TV LIVE
+https://bongobd-tick-live.akamaized.net/hls/live/2042784/gtv/index.m3u8
+#EXTINF:-1 tvg-logo="https://i.postimg.cc/mD1VCt2C/RS-Live.png",SONY TEN 1 HD
+https://linearjitp-playback.astro.com.my/dash-wv/linear/2504/default.mpd
+#EXTINF:-1 tvg-logo="https://i.postimg.cc/mD1VCt2C/RS-Live.png",STAR SPORTS 1
+https://linearjitp-playback.astro.com.my/dash-wv/linear/2514/default.mpd`;
+
     const container = document.getElementById('channel-container');
     const searchInput = document.getElementById('channelSearch');
     
-    // M3U টেক্সট অ্যানালাইসিস এবং অবজেক্ট তৈরি
+    // M3U টেক্সট অ্যানালাইসিস মেকানিজম
     function parseM3U(data) {
         const channels = [];
         const lines = data.split(/\r?\n/);
@@ -59,11 +64,11 @@
             if (line.startsWith('#EXTINF:')) {
                 currentChannel = { name: "Unknown Channel", image: "", url: "" };
                 
-                // লোগো এক্সট্রাক্ট করা
+                // লোগো খোঁজা
                 const logoMatch = line.match(/tvg-logo="([^"]+)"/i);
                 if (logoMatch) currentChannel.image = logoMatch[1];
                 
-                // নাম এক্সট্রাক্ট করা (কমা চিহ্নের শেষ অংশ)
+                // নাম খোঁজা (কমা এর পরের অংশ)
                 const nameIndex = line.lastIndexOf(',');
                 if (nameIndex !== -1) {
                     currentChannel.name = line.substring(nameIndex + 1).trim();
@@ -128,31 +133,10 @@
         });
     }
     
-    function loadChannels(){
-        fetch(PROXY_URL)
-            .then(res => { if(!res.ok) throw new Error(); return res.json(); })
-            .then(data => { 
-                // AllOrigins এর ডেটা contents প্রোপার্টিতে থাকে
-                if (data && data.contents) {
-                    const parsedChannels = parseM3U(data.contents);
-                    renderChannels(parsedChannels); 
-                } else {
-                    throw new Error();
-                }
-            })
-            .catch(() => {
-                // ১ম প্রক্সি ব্যর্থ হলে অল্টারনেটিভ প্রক্সি ব্যবহার
-                const fallbackProxy = 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(M3U_URL);
-                fetch(fallbackProxy)
-                    .then(res => res.text())
-                    .then(data => {
-                        const parsedChannels = parseM3U(data);
-                        renderChannels(parsedChannels);
-                    })
-                    .catch(() => {
-                        container.innerHTML = `<p style="color:#ff6b6b;text-align:center;padding:20px;">⚠️ চ্যানেল লোড ব্যর্থ।<br><span style="font-size:12px;color:#888;">ফাইলটি লাইভ হোস্টিং (যেমন GitHub Pages বা Vercel)-এ আপলোড করে লাইভ লিংকে ট্রাই করুন।</span></p>`;
-                    });
-            });
+    function initApp(){
+        // সরাসরি লোকাল ডেটা পার্স ও রেন্ডার
+        const parsed = parseM3U(LOCAL_M3U_DATA);
+        renderChannels(parsed);
     }
 
     window.addEventListener('DOMContentLoaded', function(){
@@ -166,9 +150,9 @@
         }, 1200);
     });
     
-    loadChannels();
+    initApp();
     
-    // কিবোর্ড নেভিগেশন সাপোর্ট
+    // কিবোর্ড নেভিগেশন
     document.addEventListener('keydown', function(event){
         const items = Array.from(document.querySelectorAll('#channel-container li')).filter(el => el.style.display !== 'none');
         const active = document.activeElement;
