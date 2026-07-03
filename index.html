@@ -8,42 +8,43 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@clappr/player@latest/dist/clappr.min.js"></script>
     <style>
         :root { --primary-glow: #00f0ff; --bg-dark: #06060c; --text-red: #ff3333; }
-        html, body { width: 100%; height: 100vh; margin: 0; padding: 0; background-color: var(--bg-dark); color: #fff; font-family: sans-serif; overflow: hidden; display: flex; flex-direction: column; }
+        body { background-color: var(--bg-dark); color: #fff; font-family: sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; }
         
         /* হেডার */
-        .fixed-top-section { flex-shrink: 0; background: #06060c; border-bottom: 1px solid #222; }
-        .main-header { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
-        .brand-logo { font-size: 20px; font-weight: 900; }
-        .search-box { width: 120px; height: 30px; border-radius: 6px; border: 1px solid #333; background: #000; color: #fff; padding-left: 10px; font-size: 12px; }
+        .fixed-top-section { background: #06060c; border-bottom: 1px solid #222; padding: 8px 15px; }
+        .top-row { display: flex; justify-content: space-between; align-items: center; }
+        
+        /* 🔴 বাম দিকে ছোট লাল নোটিশ ট্যাগ */
+        .notice-tag { 
+            display: inline-block; background: var(--text-red); color: white; 
+            padding: 2px 8px; border-radius: 4px; font-size: 10px; 
+            font-weight: bold; margin-top: 5px; text-transform: uppercase;
+        }
 
-        /* 🔴 বাম দিকে লাল নোটিশ বার */
-        .notice-container { padding: 5px 15px; background: #111; border-left: 4px solid var(--text-red); margin-bottom: 5px; }
-        .notice-text { color: var(--text-red); font-weight: bold; font-size: 11px; text-transform: uppercase; }
+        .brand-logo { font-size: 18px; font-weight: 900; }
+        .search-box { width: 100px; height: 28px; border-radius: 5px; border: 1px solid #333; background: #000; color: #fff; padding-left: 8px; font-size: 11px; }
 
         /* প্লেয়ার */
         .player-wrapper { width: 100%; aspect-ratio: 16/9; background: #000; flex-shrink: 0; }
         #player { width: 100% !important; height: 100% !important; }
 
         /* লিস্ট */
-        .category-container { display: flex; gap: 8px; overflow-x: auto; padding: 10px; background: #06060c; flex-shrink: 0; }
-        .category-btn { background: #1a1a2e; border: 1px solid #333; color: #fff; padding: 5px 12px; border-radius: 15px; font-size: 11px; white-space: nowrap; }
-        .category-btn.active { background: var(--primary-glow); color: #000; font-weight: bold; }
-        .channel-list-container { flex-grow: 1; overflow-y: auto; padding: 10px; }
-        .thumbnail-card { display: flex; align-items: center; gap: 12px; background: #111; padding: 8px; border-radius: 8px; margin-bottom: 8px; cursor: pointer; border: 1px solid #222; }
-        .thumbnail-card img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; }
+        .category-container { display: flex; gap: 6px; overflow-x: auto; padding: 10px; }
+        .category-btn { background: #1a1a2e; border: 1px solid #333; color: #fff; padding: 4px 10px; border-radius: 12px; font-size: 10px; }
+        .channel-list-container { flex-grow: 1; overflow-y: auto; padding: 0 10px; }
+        .thumbnail-card { display: flex; align-items: center; gap: 10px; background: #111; padding: 6px; border-radius: 8px; margin-bottom: 6px; cursor: pointer; border: 1px solid #222; }
+        .thumbnail-card img { width: 35px; height: 35px; border-radius: 5px; object-fit: cover; }
     </style>
 </head>
 <body>
 
     <div class="fixed-top-section">
-        <div class="main-header">
+        <div class="top-row">
             <div class="brand-logo"><span style="color:#ff0055">SA</span><span style="color:#00f0ff">TV</span></div>
             <input type="text" class="search-box" id="channelSearch" placeholder="Search...">
         </div>
-        <!-- 🔴 বাম দিকে লাল নোটিশ -->
-        <div class="notice-container">
-            <div class="notice-text">⚠️ নোটিশ: চ্যানেল প্লে হতে সময় লাগলে অপেক্ষা করুন।</div>
-        </div>
+        <!-- 🔴 আপনার সেই লাল নোটিশ ট্যাগ -->
+        <div class="notice-tag">NOTICE</div>
     </div>
 
     <div class="player-wrapper">
@@ -86,7 +87,7 @@
             document.getElementById('channel-container').innerHTML = arr.map(ch => 
                 `<div class="thumbnail-card" onclick="initPlayer('${ch.url}')">
                     <img src="${ch.logo}" onerror="this.src='https://i.postimg.cc/mD1VCt2C/RS-Live.png'">
-                    <span>${ch.name}</span>
+                    <span style="font-size: 12px;">${ch.name}</span>
                 </div>`).join('');
         }
         
