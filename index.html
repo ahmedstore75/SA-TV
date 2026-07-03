@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="bn">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DRBZH98TKH"></script>
+    <title>RS TV</title>
+    <link rel="shortcut icon" type="x-icon" href="https://i.postimg.cc/mD1VCt2C/RS-Live.png">
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <link href="style.css?v=12.0" rel="stylesheet">
+</head>
+<body>
+
+    <div id="intro-loader">
+        <div class="loader-content">
+            <div class="welcome-text">Welcome To</div>
+            <h1 class="brand-text">RS <span>TV</span></h1>
+            <div class="loading-dots"><span></span><span></span><span></span></div>
+        </div>
+    </div>
+
+    <div class="container tv-area">
+        <div class="row">
+            <div class="col-xs-12 col-md-12">
+                <div class="top-bar-wrapper">
+                    <a href="https://rslivetv.vercel.app/" class="logo-link">
+                        <div class="brand-title-neon">
+                            <div class="brand-stack">
+                                <div class="brand-line-main"><span class="brand-rs">RS</span><span class="brand-live">TV</span></div>
+                                <div class="brand-line-sub">Watch Live Sports • Movies • Entertainment</div>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="channel-search-box-premium">
+                        <input type="text" id="channelSearch" placeholder="Search matches..." autocomplete="off">
+                        <svg class="search-icon-inside" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M22 22L20 20" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 col-md-10 tv-view">
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe id="tv-player-iframe" name="player" class="embed-responsive-item" allowfullscreen src="channel.html"></iframe>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-2 channel-list" id="scroll-wrapper">
+                <ul class="thumbnail-slider" id="channel-container"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="marquee-container">
+        <div class="notice-label">NOTICE</div>
+        <marquee scrollamount="6" onmouseover="this.stop()" onmouseout="this.start()" id="noticeBar">⚠️ প্রিয় দর্শক, আপনাদের বিনোদনের সেরা সঙ্গী RS TV। এখানে উপভোগ করুন লাইভ টিভি, স্পোর্টস, মুভি ও আরও অনেক কিছু। <span style="color:aqua;font-weight:700;"> লাইভ স্ট্রিমিং প্লে হতে ৫ থেকে ১০ সেকেন্ড টাইম নিতে পারে। </span> 💡 কোনো ম্যাচ বা চ্যানেল সাময়িকভাবে কাজ না করলে একটু পর আবার চেষ্টা করুন। <span style="color:#00FF00;font-weight:700;"> আপনাদের আরও ভালো সার্ভিস দিতে আমরা প্রতিনিয়ত কাজ করে যাচ্ছি। ধন্যবাদ আমাদের সাথে থাকার জন্য ❤️ </span></marquee>
+    </div>
+
+    <footer class="footer-premium">
+        <div class="container">
+            <div class="tio-style-banner-fixed">
+                <div class="banner-overlay"></div>
+                <div class="content-wrapper">
+                    <div class="brand-logo-fixed"><span class="rs-live">RS</span><span class="tv-text">TV</span></div>
+                    <div class="text-section-fixed">
+                        <div class="main-tags"><span class="tag-cricket">CRICKET 🏏</span><span class="tag-football">FOOTBALL ⚽</span><span class="tag-tv">TV SHOWS 📺</span></div>
+                        <p class="sub-text">সব পাবেন একদম ফ্রিতে!</p>
+                    </div>
+                    <div class="live-circle"><span class="pulse"></span>LIVE</div>
+                </div>
+            </div>
+            
+            <div class="tg-card">
+                <h5 style="color:#fff;margin-bottom:5px;font-size:16px;">সাপোর্ট প্রয়োজন?</h5>
+                <p style="color:#777;font-size:11px;margin-bottom:5px;">আপডেট ও চ্যানেল রিকোয়েস্টের জন্য আমাদের টেলিগ্রাম গ্রুপে যোগ দিন।</p>
+                <a href="https://t.me/rslivetv" target="_blank" class="telegram-btn" id="telegramBtn">JOIN TELEGRAM</a>
+            </div>
+
+            <div class="ad-box">
+                <script>atOptions={'key':'774c0e371455f6476668178b5faae5ab','format':'iframe','height':50,'width':320,'params':{}};</script>
+                <script src="//www.highperformanceformat.com/774c0e371455f6476668178b5faae5ab/invoke.js"></script>
+            </div>
+            
+            <div class="copyright">© 2026 RS TV | All Rights Reserved</div>
+        </div>
+    </footer>
+
+    <script async="async" data-cfasync="false" src="https://pl26377079.effectivecpmnetwork.com/cdeccdd75d3e2e6916a42ce9653cfb08/invoke.js"></script>
+    <div id="container-cdeccdd75d3e2e6916a42ce9653cfb08"></div>
+</body>
+</html>
